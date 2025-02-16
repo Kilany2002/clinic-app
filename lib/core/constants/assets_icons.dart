@@ -1,17 +1,12 @@
-class AssetsIcons {
-  static const String logoSvg = 'assets/images/logo.svg';
-  static const String googleSvg = 'assets/icons/google.svg';
-  static const String facebookSvg = 'assets/icons/facebook.svg';
-  static const String appleSvg = 'assets/icons/apple.svg';
-  static const String welcomeBg = 'assets/images/welcome_bg.png';
+class AssetsImage {
+  static const String splash = 'assets/logo.png';
+  static const String onBoard1 = 'assets/on1.svg';
+  static const String onBoard2 = 'assets/on2on1.svg';
+  static const String onBoard3 = 'assets/on3.svg';
+  static const String noSearch = 'assets/no-search.svg';
+  static const String noSchedule = 'assets/no_scheduled.svg';
+  static const String welcome = 'assets/welcome-bg.png';
+  static const String doctorCard = 'assets/images/doctor-card.svg';
 
-  static const String homeSvg = 'assets/icons/Home.svg';
-  static const String searchSvg = 'assets/icons/search.svg';
-  static const String cartSvg = 'assets/icons/cart.svg';
-  static const String wishlistSvg = 'assets/icons/Bookmark.svg';
-  static const String notificationSvg = 'assets/icons/notification.svg';
-  static const String profileSvg = 'assets/icons/Profile.svg';
-
-  static const String doneSvg = 'assets/icons/done.svg';
-  static const String eyeSvg = 'assets/icons/eye.svg';
+  static const String doctor = 'assets/doc.svg';
 }
