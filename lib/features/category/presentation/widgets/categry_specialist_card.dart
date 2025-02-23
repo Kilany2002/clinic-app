@@ -1,5 +1,7 @@
+import 'package:clinicc/core/functions/routing.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
+import 'package:clinicc/features/category/presentation/widgets/category_doctors_view.dart';
 import 'package:flutter/material.dart';
 
 class CategrySpecialistCard extends StatelessWidget {
@@ -57,7 +59,9 @@ class CategrySpecialistCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    pushReplacement(context, DoctorsCategoryView());
+                  },
                   icon: Icon(Icons.arrow_forward_ios,
                       color: Colors.white, size: 30)),
             ],

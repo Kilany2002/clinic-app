@@ -1,4 +1,5 @@
 import 'package:clinicc/core/utils/colors.dart';
+import 'package:clinicc/features/category/data/model/doctor_category_list.dart';
 import 'package:flutter/material.dart';
 
 class DoctorCard extends StatelessWidget {

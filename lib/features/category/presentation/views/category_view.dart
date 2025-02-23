@@ -1,6 +1,7 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:clinicc/features/category/data/model/category_list.dart';
+import 'package:clinicc/features/category/presentation/widgets/category_doctors_view.dart';
 import 'package:clinicc/features/category/presentation/widgets/categry_specialist_card.dart';
 import 'package:flutter/material.dart';
 

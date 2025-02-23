@@ -18,8 +18,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   TextEditingController searchController = TextEditingController();
 
- 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +81,7 @@ class _HomeViewState extends State<HomeView> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: DoctorCard(
+                        
                         imageUrl: doctors[index]["imageUrl"],
                         name: doctors[index]["name"],
                         rating: doctors[index]["rating"],
