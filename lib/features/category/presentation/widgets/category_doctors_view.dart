@@ -5,6 +5,7 @@ import 'package:clinicc/core/widgets/bottom_nav_bar.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:clinicc/features/category/data/model/doctor_category_list.dart';
 import 'package:clinicc/features/category/presentation/widgets/category_doctor_card_widget.dart';
+import 'package:clinicc/features/category/presentation/widgets/doctor_profile_cat.dart';
 import 'package:clinicc/features/category/presentation/widgets/popular_doctors_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -104,16 +105,30 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
                       ),
                       itemCount: doctors.length,
                       itemBuilder: (context, index) {
-                        return CategoryDoctorCardWidget(doctors[index]);
+                        return GestureDetector(
+                            onTap: () {
+                              push(
+                                  context,
+                                  DoctorProfileCat(
+                                    doctor: doctors[index],
+                                  ));
+                            },
+                            child: CategoryDoctorCardWidget(doctors[index]));
                       },
                     )
                   : ListView.builder(
                       padding: EdgeInsets.all(10),
                       itemCount: doctors.length,
                       itemBuilder: (context, index) {
-                        return CategoryDoctorCardWidget(
-                          doctors[index],
-                        );
+                        return GestureDetector(
+                            onTap: () {
+                              push(
+                                  context,
+                                  DoctorProfileCat(
+                                    doctor: doctors[index],
+                                  ));
+                            },
+                            child: CategoryDoctorCardWidget(doctors[index]));
                       },
                     ),
             ),
