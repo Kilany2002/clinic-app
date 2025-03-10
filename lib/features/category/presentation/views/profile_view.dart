@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-class PaymentScreen extends StatelessWidget {
+class ProfileView extends StatelessWidget {
+  const ProfileView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Payment")),
+            appBar: AppBar(title: Text("Profile")),
       body: Center(child: Text("Hello")),
     );
   }
