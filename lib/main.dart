@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         DoctorFormScreen.id: (context) => DoctorFormScreen(),
         NavBarScreen.id: (context) => NavBarScreen(),
       },
-      initialRoute: 'DoctorFormScreen',
+      initialRoute: 'RoleSelectionScreen',
     );
   }
 }
