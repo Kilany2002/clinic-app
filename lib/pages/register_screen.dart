@@ -20,15 +20,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
   String? password;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  String? role; // Add a variable to store the role
+  String? role;
+  String? name;
 
   @override
   Widget build(BuildContext context) {
-    // Safely retrieve the role argument
     role = ModalRoute.of(context)?.settings.arguments as String?;
-
     if (role == null) {
-      // Handle the case where the role is not provided
       return Scaffold(
         body: Center(
           child: Text('Role not provided. Please go back and select a role.'),
@@ -58,9 +56,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontWeight: FontWeight.bold,
                           color: primaryColor),
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 0),
+                      child: CustomTextField(
+                        textType: TextInputType.name,
+                        onChanged: (data) {
+                          name = data;
+                        },
+                        hint: 'Name',
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
                       child: CustomTextField(
                         textType: TextInputType.emailAddress,
                         onChanged: (data) {
@@ -161,6 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'id': response.user!.id,
         'email': email,
         'role': role,
+        'name': name,
         'created_at': DateTime.now().toIso8601String(),
       });
 

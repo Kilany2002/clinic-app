@@ -1,6 +1,6 @@
-import 'package:clinicc/features/category/presentation/views/book_view.dart';
 import 'package:clinicc/features/category/presentation/views/category_view.dart';
 import 'package:clinicc/core/utils/colors.dart';
+import 'package:clinicc/pages/chat_screen.dart';
 import 'package:clinicc/pages/patient_home_view.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,12 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int index = 0;
-  List<Widget> pages = [HomeView(), CategoryView(), BookView(), ProfileView()];
+  List<Widget> pages = [
+    PatientHomeView(),
+    CategoryView(),
+    ChatScreen(),
+    ProfileView()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +45,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   label: 'Category'),
               BottomNavigationBarItem(
                   backgroundColor: AppColors.color1,
-                  icon: Icon(Icons.book),
-                  label: 'book'),
+                  icon: Icon(Icons.chat),
+                  label: 'Chat'),
               BottomNavigationBarItem(
                   backgroundColor: AppColors.color1,
                   icon: Icon(Icons.person),

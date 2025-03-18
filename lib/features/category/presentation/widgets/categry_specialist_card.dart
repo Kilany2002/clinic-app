@@ -3,7 +3,7 @@ import 'package:clinicc/core/utils/text_style.dart';
 import 'package:clinicc/features/category/presentation/widgets/category_doctors_view.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/functions/routing.dart';
+import '../../../../core/functions/routing.dart';
 
 class CategrySpecialistCard extends StatelessWidget {
   final String imageUrl;

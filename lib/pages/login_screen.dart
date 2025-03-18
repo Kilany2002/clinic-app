@@ -1,4 +1,5 @@
 import 'package:clinicc/core/constants/constant_data.dart';
+import 'package:clinicc/core/functions/routing.dart';
 import 'package:clinicc/helper/show_snack_bar.dart';
 import 'package:clinicc/pages/register_screen.dart';
 import 'package:clinicc/widgets/customButton.dart';
@@ -9,8 +10,9 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
   static String id = 'LoginScreen';
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -19,11 +21,66 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
   bool isLoading = false;
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserSession();
+    _listenToAuthChanges();
+  }
+
+  void _checkUserSession() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      debugPrint("User is already logged in: ${user.id}");
+
+      setState(() => isLoading = true);
+
+      final userResponse = await Supabase.instance.client
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+      final userRole = userResponse['role'];
+      debugPrint("User role: $userRole");
+
+      if (userRole == 'doctor') {
+        pushReplacementNamed(context, 'NavBarScreen');
+      } else if (userRole == 'patient') {
+        pushReplacementNamed(context, 'BottomNavBar');
+      } else {
+        debugPrint("Invalid role detected.");
+      }
+
+      setState(() => isLoading = false); // إيقاف الـ loading بعد التوجيه
+    } else {
+      debugPrint("No user session found, showing login screen.");
+    }
+  }
+
+  void _listenToAuthChanges() {
+    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        debugPrint("User session updated: ${user.id}");
+      } else {
+        debugPrint("User logged out or session expired.");
+        pushReplacementNamed(context, 'LoginScreen');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final String? role = ModalRoute.of(context)?.settings.arguments as String?;
+    if (isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (role == null) {
       return Scaffold(
         body: Center(
@@ -38,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SafeArea(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Form(
                 key: formKey,
@@ -47,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     CustomCircle(),
                     Text(
-                      textAlign: TextAlign.center,
                       'Login as $role',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -74,55 +131,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: 'Password',
                       ),
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
+                    SizedBox(height: 15),
                     CustomButton(
-                        text: 'Login',
-                        onTap: () async {
-                          if (formKey.currentState!.validate()) {
-                            isLoading = true;
-                            setState(() {});
-
-                            try {
-                              print('Starting login process...');
-                              await loginUser();
-                              final user =
-                                  Supabase.instance.client.auth.currentUser;
-                              print('User logged in: ${user!.email}');
-                              final response = await Supabase.instance.client
-                                  .from('users')
-                                  .select('role, email')
-                                  .eq('id', user.id)
-                                  .single();
-
-                              final userRole = response['role'];
-                              final userEmail = response['email'];
-                              print('User role: $userRole');
-                              print('User email: $userEmail');
-                              if (userRole == 'doctor' && userEmail == email) {
-                                print('Navigating to NavBarScreen');
-                                Navigator.pushNamed(context, 'NavBarScreen');
-                              } else if (userRole == 'patient') {
-                                print('Navigating to Patient Home');
-                                Navigator.pushNamed(context, 'BottomNavBar');
-                              } else {
-                                print('Invalid role or email');
-                                showSnackBar(context, 'Invalid role or email');
-                              }
-                            } on Exception catch (e) {
-                              print('Error: $e');
-                              showSnackBar(
-                                  context, 'Invalid email or password');
-                            }
-
-                            isLoading = false;
-                            setState(() {});
-                          }
-                        }),
-                    SizedBox(
-                      height: 5,
+                      text: 'Login',
+                      onTap: () async {
+                        if (formKey.currentState!.validate()) {
+                          setState(() => isLoading = true);
+                          await loginUser();
+                          setState(() => isLoading = false);
+                        }
+                      },
                     ),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -134,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontWeight: FontWeight.bold),
                         ),
                         InkWell(
-                          onTap: () => Navigator.pushNamed(
+                          onTap: () => pushNamed(
                             context,
                             RegisterScreen.id,
                             arguments: role,
@@ -161,21 +181,53 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loginUser() async {
     try {
-      print('Attempting to log in with email: $email');
+      debugPrint('Attempting to log in with email: $email');
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email!,
         password: password!,
       );
 
-      if (response.user == null) {
-        print('Login failed: User not found');
+      final user = response.user;
+      if (user == null) {
+        debugPrint('Login failed: User not found');
         throw Exception('User not found');
       }
 
-      print('Login successful: User ID = ${response.user!.id}');
+      debugPrint('Login successful: User ID = ${user.id}');
+
+      final userResponse = await Supabase.instance.client
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+      final userRole = userResponse['role'];
+      debugPrint('User role: $userRole');
+
+      if (userRole == 'doctor') {
+        final doctorProfile = await Supabase.instance.client
+            .from('doctors')
+            .select('id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+        if (doctorProfile == null) {
+          debugPrint('New doctor detected. Redirecting to DoctorFormScreen');
+          pushNamed(context, 'DoctorFormScreen');
+        } else {
+          debugPrint('Existing doctor detected. Redirecting to NavBarScreen');
+          pushNamed(context, 'NavBarScreen');
+        }
+      } else if (userRole == 'patient') {
+        debugPrint('Redirecting to Patient Home');
+        pushNamed(context, 'BottomNavBar');
+      } else {
+        debugPrint('Invalid role');
+        showSnackBar(context, 'Invalid role');
+      }
     } catch (e) {
-      print('Error during login: $e');
-      rethrow;
+      debugPrint('Error during login: $e');
+      showSnackBar(context, 'Invalid email or password');
     }
   }
 }

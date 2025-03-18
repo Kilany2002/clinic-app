@@ -1,23 +1,36 @@
+import 'package:clinicc/core/functions/local_storage.dart';
+import 'package:clinicc/features/doctor/logic/doctor_service.dart';
+import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
-import 'package:clinicc/features/home/data/model/list_of_doctor_card_model.dart';
+import 'package:clinicc/features/home/data/model/patient_service.dart';
 import 'package:clinicc/features/home/presentation/views/widgets/app_bar.dart';
 import 'package:clinicc/features/home/presentation/views/widgets/search_bar_widget.dart';
 import 'package:clinicc/features/home/presentation/views/widgets/specialization_card.dart';
-import 'package:clinicc/features/home/presentation/views/widgets/doctor_card.dart'; // Import the DoctorCard
-import 'package:flutter/material.dart';
+import 'package:clinicc/features/home/presentation/views/widgets/doctor_card.dart';
 import 'package:gap/gap.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
-  static const String id = 'HomeView';
+class PatientHomeView extends StatefulWidget {
+  const PatientHomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<PatientHomeView> createState() => _PatientHomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _PatientHomeViewState extends State<PatientHomeView> {
+  final PatientService patientService = PatientService();
+  final DoctorService doctorService = DoctorService();
   TextEditingController searchController = TextEditingController();
+  Future<String?>? userDataFuture;
+  Future<List<Map<String, dynamic>>>? doctorsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    userDataFuture =
+        patientService.fetchUserName(); 
+    doctorsFuture = doctorService.fetchDoctors();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +44,34 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(
-                    'Hello  ,',
-                    style: getTitleStyle(color: AppColors.black),
-                  ),
-                  Text(
-                    ' UserName',
-                    style: getTitleStyle(),
-                  )
-                ],
+              FutureBuilder<String?>(
+                future: userDataFuture,
+                builder: (context, snapshot) {
+                  print("📢 FutureBuilder State: ${snapshot.connectionState}");
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    print("❌ Error: ${snapshot.error}");
+                    return Text('Error fetching name', style: getbodyStyle());
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+                    print("❌ No data, showing default");
+                    return const Text('Hello, Patient');
+                  }
+
+                  print("✅ Displaying name: ${snapshot.data}");
+                  return Row(
+                    children: [
+                      Text(
+                        'Hello, ',
+                        style: getTitleStyle(color: AppColors.black),
+                      ),
+                      Text(
+                        snapshot.data!,
+                        style: getTitleStyle(),
+                      ),
+                    ],
+                  );
+                },
               ),
               const Gap(10),
               Text(
@@ -51,16 +81,17 @@ class _HomeViewState extends State<HomeView> {
               ),
               const Gap(10),
               SearchBarWidget(
-                  suffixIcon: FloatingActionButton(
-                    backgroundColor: AppColors.color1,
-                    onPressed: () {},
-                    child: const Icon(
-                      Icons.search,
-                      color: AppColors.white,
-                    ),
+                suffixIcon: FloatingActionButton(
+                  backgroundColor: AppColors.color1,
+                  onPressed: () {},
+                  child: const Icon(
+                    Icons.search,
+                    color: AppColors.white,
                   ),
-                  searchController: searchController,
-                  text: "Search."),
+                ),
+                searchController: searchController,
+                text: "Search.",
+              ),
               const Gap(10),
               Align(
                   alignment: Alignment.centerLeft,
@@ -75,19 +106,33 @@ class _HomeViewState extends State<HomeView> {
               const Gap(10),
               SizedBox(
                 height: 270,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: doctors.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: DoctorCard(
-                        imageUrl: doctors[index]["imageUrl"],
-                        name: doctors[index]["name"],
-                        rating: doctors[index]["rating"],
-                        experience: doctors[index]["experience"],
-                        price: doctors[index]["price"],
-                      ),
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: doctorsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text('No doctors available');
+                    }
+
+                    final doctors = snapshot.data!;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: doctors.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: DoctorCard(
+                            imageUrl: doctors[index]["image_url"],
+                            name: doctors[index]["name"],
+                            rating: 4.5,
+                            experience: doctors[index]["experience"] as int,
+                            price: doctors[index]["price"] as double,
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

@@ -1,3 +1,4 @@
+import 'package:clinicc/core/functions/local_storage.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/widgets/bottom_nav_bar.dart';
 import 'package:clinicc/firebase_options.dart';
@@ -13,6 +14,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    AppLocalStorage.init();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
