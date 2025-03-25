@@ -4,7 +4,7 @@ class DaysSelector extends StatelessWidget {
   final int index;
   final Map<String, dynamic> destination;
 
-  const DaysSelector({Key? key, required this.index, required this.destination}) : super(key: key);
+  const DaysSelector({super.key, required this.index, required this.destination});
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +16,11 @@ class DaysSelector extends StatelessWidget {
           label: Text(day),
           selected: isSelected,
           onSelected: (selected) {
-            // If selected, add the day to the list. If deselected, remove it.
             if (selected) {
               destination['days'].add(day);
             } else {
               destination['days'].remove(day);
             }
-            // Call setState to update the UI and reflect the changes.
             (context as Element).markNeedsBuild();
           },
         );

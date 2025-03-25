@@ -10,7 +10,14 @@ TextStyle getHeadlineTextStyle(
   );
 }
 
-// title
+TextStyle getSubTitleStyle(
+    {Color color = Colors.black54, double fontSize = 14}) {
+  return TextStyle(
+    color: color,
+    fontSize: fontSize,
+    fontWeight: FontWeight.w400,
+  );
+}
 
 TextStyle getTitleStyle(
     {double fontSize = 18, fontWeight = FontWeight.bold, Color? color}) {

@@ -47,6 +47,12 @@ dependencies:
   flutter_svg: ^2.0.17
   pay_with_paymob: ^1.4.0
   image_picker: ^1.1.2
+  easy_date_timeline: ^2.0.9        
+  smooth_page_indicator: ^1.2.1
+  file_picker: ^9.2.1 
+  path_provider: ^2.0.15
+  provider: ^6.1.2
+  shimmer: ^3.0.0
 
 
 dev_dependencies:

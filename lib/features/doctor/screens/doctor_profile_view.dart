@@ -1,3 +1,4 @@
+import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:clinicc/features/doctor/logic/doctor_profile_controller.dart';
 import 'package:flutter/material.dart';
 import '../widgets/menu_item.dart';
@@ -19,16 +20,13 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
   }
 
   Future<void> _loadData() async {
-    setState(() {
-    });
+    setState(() {});
     await _controller.fetchUserData();
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<void> _editImage() async {
-    setState(() {
-    });
+    setState(() {});
     try {
       await _controller.editImage();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,14 +37,12 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
         SnackBar(content: Text('Failed to update image: $e')),
       );
     } finally {
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
   Future<void> _deleteImage() async {
-    setState(() {
-    });
+    setState(() {});
     try {
       await _controller.deleteImage();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,14 +53,17 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
         SnackBar(content: Text('Failed to delete image: $e')),
       );
     } finally {
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        title: 'Profile',
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [

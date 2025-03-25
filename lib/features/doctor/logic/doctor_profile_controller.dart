@@ -39,7 +39,8 @@ class DoctorProfileController {
   }
 
   Future<void> editImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -50,14 +51,15 @@ class DoctorProfileController {
       try {
         final String filePath = 'doctor_profiles/${user.id}.jpg';
         print('Uploading image to: $filePath');
-        await supabase.storage.from('doctor_images').upload(filePath, File(pickedFile.path));
+        await supabase.storage
+            .from('doctor_images')
+            .upload(filePath, File(pickedFile.path));
         final String imageUrl =
             supabase.storage.from('doctor_images').getPublicUrl(filePath);
         print('Image uploaded successfully. URL: $imageUrl');
         await supabase
             .from('doctors')
-            .update({'image_url': imageUrl})
-            .eq('user_id', user.id);
+            .update({'image_url': imageUrl}).eq('user_id', user.id);
 
         _imageUrl = imageUrl;
       } catch (e) {
