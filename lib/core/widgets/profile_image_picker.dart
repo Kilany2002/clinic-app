@@ -5,7 +5,7 @@ class ProfileImagePicker extends StatelessWidget {
   final VoidCallback onTap;
   final File? image;
 
-  const ProfileImagePicker({Key? key, required this.onTap, this.image}) : super(key: key);
+  const ProfileImagePicker({super.key, required this.onTap, this.image});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppColors {
@@ -14,9 +15,26 @@ class AppColors {
 /// Supabase client
 final supabase = Supabase.instance.client;
 
-/// Simple preloader inside a Center widget
-const preloader =
-    Center(child: CircularProgressIndicator(color: Colors.orange));
+/// Reusable Skeleton Loader widget
+Widget skeletonLoader({double width = double.infinity, double height = 20}) {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+  );
+}
+
+/// Preloader replaced with a Skeleton Loader
+final preloader = Center(
+  child: skeletonLoader(width: 200, height: 20),
+);
 
 /// Simple sized box to space out form elements
 const formSpacer = SizedBox(width: 16, height: 16);
@@ -25,7 +43,7 @@ const formSpacer = SizedBox(width: 16, height: 16);
 const formPadding = EdgeInsets.symmetric(vertical: 20, horizontal: 16);
 
 /// Error message to display the user when unexpected error occurs.
-const unexpectedErrorMessage = 'Unexpected error occured.';
+const unexpectedErrorMessage = 'Unexpected error occurred.';
 
 /// Basic theme to change the look and feel of the app
 final appTheme = ThemeData.light().copyWith(

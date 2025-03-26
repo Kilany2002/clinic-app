@@ -1,10 +1,8 @@
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/doctor/screens/doctor_chat_view.dart';
 import 'package:clinicc/features/doctor/screens/doctor_home_view.dart';
 import 'package:clinicc/features/doctor/screens/doctor_profile_view.dart';
-import 'package:clinicc/pages/chat_screen.dart';
+import 'package:clinicc/features/messages/conversations_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NavBarScreen extends StatefulWidget {
   const NavBarScreen({super.key});
@@ -16,9 +14,12 @@ class NavBarScreen extends StatefulWidget {
 
 class _NavBarScreenState extends State<NavBarScreen> {
   int index = 0;
-  List<Widget> pages = [DoctorHomeView(
- // userId: 
-  ), ChatScreen(), DoctorProfileView()];
+  
+  List<Widget> pages = [
+    DoctorHomeView(),
+    ConversationsScreen(),
+    DoctorProfileView()
+  ];
 
   @override
   Widget build(BuildContext context) {

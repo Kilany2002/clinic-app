@@ -1,10 +1,9 @@
-import 'package:clinicc/core/constants/constant_data.dart';
+import 'package:clinicc/core/constants/functions/show_snack_bar.dart';
 import 'package:clinicc/core/functions/routing.dart';
-import 'package:clinicc/helper/show_snack_bar.dart';
+import 'package:clinicc/core/utils/colors.dart';
+import 'package:clinicc/features/auth/widgets/customButton.dart';
 import 'package:clinicc/pages/register_screen.dart';
-import 'package:clinicc/widgets/customButton.dart';
-import 'package:clinicc/widgets/customCircle.dart';
-import 'package:clinicc/widgets/customTextField.dart';
+
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,66 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
   bool isLoading = false;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkUserSession();
-    _listenToAuthChanges();
-  }
-
-  void _checkUserSession() async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user != null) {
-      debugPrint("User is already logged in: ${user.id}");
-
-      setState(() => isLoading = true);
-
-      final userResponse = await Supabase.instance.client
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-      final userRole = userResponse['role'];
-      debugPrint("User role: $userRole");
-
-      if (userRole == 'doctor') {
-        pushReplacementNamed(context, 'NavBarScreen');
-      } else if (userRole == 'patient') {
-        pushReplacementNamed(context, 'BottomNavBar');
-      } else {
-        debugPrint("Invalid role detected.");
-      }
-
-      setState(() => isLoading = false); // إيقاف الـ loading بعد التوجيه
-    } else {
-      debugPrint("No user session found, showing login screen.");
-    }
-  }
-
-  void _listenToAuthChanges() {
-    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
-      final user = Supabase.instance.client.auth.currentUser;
-      if (user != null) {
-        debugPrint("User session updated: ${user.id}");
-      } else {
-        debugPrint("User logged out or session expired.");
-        pushReplacementNamed(context, 'LoginScreen');
-      }
-    });
-  }
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final String? role = ModalRoute.of(context)?.settings.arguments as String?;
-    if (isLoading) {
-      return Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     if (role == null) {
       return Scaffold(
         body: Center(
@@ -92,87 +36,141 @@ class _LoginScreenState extends State<LoginScreen> {
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       child: Scaffold(
+        backgroundColor: AppColors.color1,
         body: SafeArea(
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomCircle(),
-                    Text(
-                      'Login as $role',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Let's Start with\nSign in",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 0),
-                      child: CustomTextField(
-                        onChanged: (data) {
-                          email = data;
-                        },
-                        hint: 'Email',
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
-                      child: CustomTextField(
-                        onChanged: (data) {
-                          password = data;
-                        },
-                        hint: 'Password',
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    CustomButton(
-                      text: 'Login',
-                      onTap: () async {
-                        if (formKey.currentState!.validate()) {
-                          setState(() => isLoading = true);
-                          await loginUser();
-                          setState(() => isLoading = false);
-                        }
-                      },
-                    ),
-                    SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account? ",
-                          style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        InkWell(
-                          onTap: () => pushNamed(
-                            context,
-                            RegisterScreen.id,
-                            arguments: role,
-                          ),
-                          child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              SizedBox(height: 50),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(50)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: Form(
+                      key: formKey,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/login.png', width: 100),
+                            SizedBox(height: 20),
+                            TextFormField(
+                              onChanged: (data) => email = data,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon:
+                                    Icon(Icons.email, color: AppColors.color1),
+                                hintText: "Email",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            TextFormField(
+                              obscureText: true,
+                              onChanged: (data) => password = data,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon:
+                                    Icon(Icons.lock, color: AppColors.color1),
+                                hintText: "Password",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  await loginUser();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.color1,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: Text("Sign in",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Forgot password?",
+                                style: TextStyle(
+                                    color: AppColors.color1, fontSize: 16),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account? ",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                InkWell(
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    RegisterScreen.id,
+                                    arguments: role,
+                                  ),
+                                  child: Text(
+                                    "Sign Up",
+                                    style: TextStyle(
+                                        color: AppColors.color1,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
