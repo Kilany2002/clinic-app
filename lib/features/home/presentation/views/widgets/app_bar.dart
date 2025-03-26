@@ -10,11 +10,13 @@ class AppBarr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: AppColors.white,
       title: Text(
         'Clinic',
         style: getTitleStyle(color: AppColors.color1, fontSize: 25),
       ),
+      centerTitle: true,
       actions: const [
         Padding(
           padding: EdgeInsets.all(10),

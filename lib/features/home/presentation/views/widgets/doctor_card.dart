@@ -1,9 +1,8 @@
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/category/data/model/doctor_category_list.dart';
 import 'package:flutter/material.dart';
 
 class DoctorCard extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final String name;
   final double rating;
   final int experience;
@@ -40,14 +39,21 @@ class DoctorCard extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
                 ),
-              ),
-              Center(
-                child: ClipRRect(
-                  child: Image.network(
-                    imageUrl,
-                    width: 115,
-                    height: 124,
-                    fit: BoxFit.cover,
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: imageUrl != null && imageUrl!.isNotEmpty
+                        ? Image.network(
+                            imageUrl!,
+                            width: 115,
+                            height: 124,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.broken_image,
+                                    size: 60, color: Colors.grey),
+                          )
+                        : const Icon(Icons.person,
+                            size: 60, color: Colors.grey),
                   ),
                 ),
               ),

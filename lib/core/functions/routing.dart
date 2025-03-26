@@ -14,8 +14,21 @@ pushAndRemoveUntil(BuildContext context, Widget view) {
       MaterialPageRoute(builder: (context) => view), (route) => false);
 }
 
-
-  pop(context){
-  Navigator.of(context).pop(context);
+pushNamed(BuildContext context, String routeName, {Object? arguments}) {
+  Navigator.of(context).pushNamed(routeName, arguments: arguments);
 }
 
+pushReplacementNamed(BuildContext context, String routeName,
+    {Object? arguments}) {
+  Navigator.of(context).pushReplacementNamed(routeName, arguments: arguments);
+}
+
+pushNamedAndRemoveUntil(BuildContext context, String routeName,
+    {Object? arguments}) {
+  Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => false,
+      arguments: arguments);
+}
+
+pop(BuildContext context) {
+  Navigator.of(context).pop();
+}
