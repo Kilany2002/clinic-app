@@ -121,6 +121,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       appBar: CustomAppBar(
         title: 'Conversations',
         centerTitle: true,
+        
       ),
       body: Column(
         children: [

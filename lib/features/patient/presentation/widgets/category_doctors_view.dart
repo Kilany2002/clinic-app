@@ -8,7 +8,7 @@ import 'package:clinicc/features/patient/presentation/widgets/doctor_profile_cat
 import 'package:clinicc/features/patient/presentation/widgets/popular_doctors_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/functions/routing.dart';
+import '../../../../core/functions/routing.dart';
 
 class DoctorsCategoryView extends StatefulWidget {
   const DoctorsCategoryView({super.key});

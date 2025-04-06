@@ -1,6 +1,6 @@
+import 'package:clinicc/core/functions/local_storage.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/features/patient/presentation/views/bottom_nav_bar.dart';
-import 'package:clinicc/features/patient/presentation/views/chat_view.dart';
 import 'package:clinicc/firebase_options.dart';
 import 'package:clinicc/features/doctor/screens/doctor_form_view.dart';
 import 'package:clinicc/features/auth/pages/login_screen.dart';
@@ -14,6 +14,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AppLocalStorage.init();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -48,7 +50,6 @@ class MyApp extends StatelessWidget {
         RoleSelectionScreen.id: (context) => RoleSelectionScreen(),
         DoctorFormScreen.id: (context) => DoctorFormScreen(),
         NavBarScreen.id: (context) => NavBarScreen(),
-        ChatView.id: (context) => ChatView(),
       },
       initialRoute: '/',
     );

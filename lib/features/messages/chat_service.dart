@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  Future<List<Map<String, dynamic>>> fetchMessages(String otherUserId) async {
+  Future<List<Map<String, dynamic>>> fetchMessages(String otherUserId,
+      {int limit = 50, int offset = 0}) async {
     final user = _supabase.auth.currentUser;
     if (user == null) return [];
 
@@ -13,44 +15,88 @@ class ChatService {
         .select()
         .or('sender_id.eq.${user.id},receiver_id.eq.${user.id}')
         .or('sender_id.eq.$otherUserId,receiver_id.eq.$otherUserId')
-        .order('created_at', ascending: true);
+        .order('created_at', ascending: false)
+        .range(offset, offset + limit - 1);
 
-    return response;
+    return response.reversed.toList();
   }
 
-  Future<void> sendMessage(String receiverId, String messageText) async {
+  Future<void> sendMessage(String receiverId, String messageText,
+      {File? attachment}) async {
     final user = _supabase.auth.currentUser;
-    if (user == null) return;
+    if (user == null) throw Exception('User not authenticated');
 
-    await _supabase.from('messages').insert({
+    final Map<String, dynamic> messageData = {
       'sender_id': user.id,
       'receiver_id': receiverId,
       'message_text': messageText,
+      'is_read': false,
+    };
+
+    if (attachment != null) {
+      final fileExt = attachment.path.split('.').last;
+      final fileName =
+          '${user.id}-${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+      final filePath = 'messages/$fileName';
+
+      await _supabase.storage
+          .from('message.attachments')
+          .upload(filePath, attachment);
+
+      final fileUrl =
+          _supabase.storage.from('message.attachments').getPublicUrl(filePath);
+
+      messageData['attachment_url'] = fileUrl;
+      messageData['attachment_type'] = _getAttachmentType(fileExt);
+    }
+
+    await _supabase.from('messages').insert(messageData);
+  }
+
+  Future<void> markMessagesAsRead(List<String> messageIds) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    await _supabase
+        .from('messages')
+        .update({'is_read': true})
+        .inFilter('id', messageIds)
+        .eq('receiver_id', user.id);
+  }
+
+  Future<void> sendTypingStatus(String receiverId, bool isTyping) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
+
+    await _supabase.from('typing_status').upsert({
+      'user_id': user.id,
+      'receiver_id': receiverId,
+      'is_typing': isTyping,
+      'updated_at': DateTime.now().toIso8601String(),
     });
   }
 
-  StreamSubscription<List<Map<String, dynamic>>> subscribeToMessages(
-    String otherUserId,
-    Function(List<Map<String, dynamic>>) onNewMessage,
-  ) {
+  Stream<Map<String, dynamic>?> subscribeToTypingStatus(String otherUserId) {
+    return _supabase
+        .from('typing_status')
+        .stream(primaryKey: ['user_id', 'receiver_id'])
+        .execute()
+        .map((data) => data.isNotEmpty ? data.first : null);
+  }
+
+  Stream<List<Map<String, dynamic>>> subscribeToMessages(String otherUserId) {
     final user = _supabase.auth.currentUser;
     if (user == null) throw Exception('User not logged in');
 
-    // Use the query builder to filter messages
-    final stream = _supabase
-        .from('messages')
-        .stream(primaryKey: ['id'])
-        .eq('sender_id', user.id) // Filter by sender_id
-        .eq('receiver_id', otherUserId); // Filter by receiver_id
-
-    if (stream == null) {
-      throw Exception('Failed to create stream. Ensure Realtime is enabled for the messages table.');
-    }
-
-    return stream.listen(onNewMessage);
+    return _supabase.from('messages').stream(primaryKey: ['id']).execute();
   }
-}
 
-extension on SupabaseStreamBuilder {
-  eq(String s, String otherUserId) {}
+  String _getAttachmentType(String fileExt) {
+    final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    final videoExtensions = ['mp4', 'mov', 'avi', 'mkv'];
+
+    if (imageExtensions.contains(fileExt.toLowerCase())) return 'image';
+    if (videoExtensions.contains(fileExt.toLowerCase())) return 'video';
+    return 'file';
+  }
 }

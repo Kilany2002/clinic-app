@@ -14,6 +14,7 @@ class NavBarScreen extends StatefulWidget {
 
 class _NavBarScreenState extends State<NavBarScreen> {
   int index = 0;
+  
   List<Widget> pages = [
     DoctorHomeView(),
     ConversationsScreen(),
