@@ -11,11 +11,13 @@ import 'package:clinicc/features/doctor/screens/doctor_nav_bar.dart';
 import 'package:clinicc/features/auth/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'generated/l10n.dart'; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    AppLocalStorage.init();
+  AppLocalStorage.init();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -43,6 +45,13 @@ class MyApp extends StatelessWidget {
       title: 'Clinic',
       debugShowCheckedModeBanner: false,
       theme: appTheme,
+      localizationsDelegates: [
+        S.delegate, 
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales, // تحديد اللغات المدعومة
       routes: {
         '/': (context) => SplashScreen(),
         LoginScreen.id: (context) => LoginScreen(),

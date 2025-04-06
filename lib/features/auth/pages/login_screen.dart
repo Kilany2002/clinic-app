@@ -6,6 +6,7 @@ import 'package:clinicc/features/auth/widgets/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:clinicc/generated/l10n.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (role == null) {
       return Scaffold(
         body: Center(
-          child: Text('Role not provided. Please go back and select a role.'),
+          child: Text(S.of(context).roleNotProvided),
         ),
       );
     }
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Let's Start with\nSign in as $role",
+                    S.of(context).signInAs(role),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -76,14 +77,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               onChanged: (data) => email = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your email';
+                                  return S.of(context).pleaseEnterEmail;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                 prefixIcon:
                                     Icon(Icons.email, color: AppColors.color1),
-                                hintText: "Email",
+                                hintText: S.of(context).emailHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -95,14 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               onChanged: (data) => password = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return S.of(context).pleaseEnterPassword;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                 prefixIcon:
                                     Icon(Icons.lock, color: AppColors.color1),
-                                hintText: "Password",
+                                hintText: S.of(context).passwordHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               height: 50,
                               child: CustomButton(
-                                text: 'Login',
+                                text: S.of(context).login,
                                 onTap: () async {
                                   if (formKey.currentState!.validate()) {
                                     setState(() => isLoading = true);
@@ -134,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               },
                               child: Text(
-                                "Forgot password?",
+                                S.of(context).forgotPassword,
                                 style: TextStyle(
                                     color: AppColors.color1, fontSize: 16),
                               ),
@@ -143,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Don't have an account? ",
+                                  S.of(context).dontHaveAccount,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -156,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     arguments: role,
                                   ),
                                   child: Text(
-                                    "Sign Up",
+                                    S.of(context).signUp,
                                     style: TextStyle(
                                         color: AppColors.color1,
                                         fontSize: 16,
@@ -181,21 +182,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> loginUser() async {
     try {
-      print('Attempting to log in with email: $email');
       final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email!,
         password: password!,
       );
 
       final user = response.user;
-      if (user == null) {
-        print('Login failed: User not found');
-        throw Exception('User not found');
-      }
+      if (user == null) throw Exception('User not found');
 
-      print('Login successful: User ID = ${user.id}');
-
-      // Fetch user role from 'users' table
       final userResponse = await Supabase.instance.client
           .from('users')
           .select('role')
@@ -203,33 +197,26 @@ class _LoginScreenState extends State<LoginScreen> {
           .single();
 
       final userRole = userResponse['role'];
-      print('User role: $userRole');
 
       if (userRole == 'doctor') {
-        // Check if doctor profile exists
         final doctorProfile = await Supabase.instance.client
             .from('doctors')
             .select('id')
             .eq('user_id', user.id)
-            .maybeSingle(); // Returns null if no record found
+            .maybeSingle();
 
         if (doctorProfile == null) {
-          print('New doctor detected. Redirecting to DoctorFormScreen');
           Navigator.pushNamed(context, 'DoctorFormScreen');
         } else {
-          print('Existing doctor detected. Redirecting to NavBarScreen');
           Navigator.pushNamed(context, 'NavBarScreen');
         }
       } else if (userRole == 'patient') {
-        print('Redirecting to Patient Home');
         Navigator.pushNamed(context, 'BottomNavBar');
       } else {
-        print('Invalid role');
-        showSnackBar(context, 'Invalid role');
+        showSnackBar(context, S.of(context).invalidRole);
       }
     } catch (e) {
-      print('Error during login: $e');
-      showSnackBar(context, 'Invalid email or password');
+      showSnackBar(context, S.of(context).loginFailed);
     }
   }
 }

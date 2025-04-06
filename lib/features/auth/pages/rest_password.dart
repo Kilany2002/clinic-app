@@ -1,3 +1,4 @@
+import 'package:clinicc/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
@@ -5,6 +6,8 @@ class ResetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final local = S.of(context);  
+
     return Scaffold(
       backgroundColor: Colors.blue.shade800,
       body: Center(
@@ -19,18 +22,16 @@ class ResetPasswordScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Reset Password",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  local.resetPassword, 
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Enter the code sent to your email and set a new password.",
+                Text(
+                  local.resetPasswordDescription, 
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
@@ -42,7 +43,7 @@ class ResetPasswordScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         maxLength: 1,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           counterText: '',
                         ),
@@ -51,38 +52,34 @@ class ResetPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-               
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: "Password",
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
+                    labelText: local.password, 
+                    prefixIcon: const Icon(Icons.lock),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 15),
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: "Confirm Password",
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
+                    labelText: local.confirmPassword, 
+                    prefixIcon: const Icon(Icons.lock),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 20),
-
-             
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue.shade800,
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  onPressed: () {
-                    
-                  },
-                  child: const Text("Reset Password",
-                      style: TextStyle(color: Colors.white)),
+                  onPressed: () {},
+                  child: Text(
+                    local.resetPassword, 
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),

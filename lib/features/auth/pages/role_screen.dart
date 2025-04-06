@@ -1,6 +1,7 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/features/auth/pages/register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:clinicc/generated/l10n.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -18,12 +19,13 @@ class RoleSelectionScreen extends StatelessWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "Let's Get Started\nSelect Your Role",
+                  S.of(context).getStarted,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -41,7 +43,7 @@ class RoleSelectionScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Are you a Patient or a Doctor?",
+                        S.of(context).chooseRole,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -62,7 +64,7 @@ class RoleSelectionScreen extends StatelessWidget {
                           },
                           icon: Icon(Icons.person, color: Colors.white),
                           label: Text(
-                            "I'm a Patient",
+                            S.of(context).imPatient,
                             style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
@@ -87,7 +89,7 @@ class RoleSelectionScreen extends StatelessWidget {
                           },
                           icon: Icon(Icons.local_hospital, color: Colors.white),
                           label: Text(
-                            "I'm a Doctor",
+                            S.of(context).imDoctor,
                             style: TextStyle(fontSize: 18, color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(

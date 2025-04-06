@@ -1,6 +1,7 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/constants/functions/show_snack_bar.dart';
 import 'package:clinicc/features/auth/pages/login_screen.dart';
+import 'package:clinicc/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (role == null) {
       return Scaffold(
         body: Center(
-          child: Text('Role not provided. Please go back and select a role.'),
+          child: Text(S.of(context).roleNotProvided),
         ),
       );
     }
@@ -36,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       child: Scaffold(
-        backgroundColor: AppColors.color1, 
+        backgroundColor: AppColors.color1,
         body: SafeArea(
           child: Column(
             children: [
@@ -45,8 +46,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
-                    "Let's Start with\nSign Up as $role",
-                    style: TextStyle(
+                    S.of(context).registerAs(role!),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -54,11 +55,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
                   ),
@@ -68,99 +69,100 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       key: formKey,
                       child: SingleChildScrollView(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/sgin_up.jpg', width: 100), 
-                            SizedBox(height: 20),
+                            Image.asset('assets/images/sgin_up.jpg', width: 100),
+                            const SizedBox(height: 20),
                             TextFormField(
                               onChanged: (data) => name = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your name';
+                                  return S.of(context).pleaseEnterName;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.person, color: AppColors.color1),
-                                hintText: "Name",
+                                hintText: S.of(context).nameHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             TextFormField(
                               onChanged: (data) => phoneNumber = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
+                                  return S.of(context).pleaseEnterPhone;
                                 }
                                 return null;
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.phone, color: AppColors.color1),
-                                hintText: "Phone Number",
+                                hintText: S.of(context).phoneHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             TextFormField(
                               onChanged: (data) => email = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your email';
+                                  return S.of(context).pleaseEnterEmail;
                                 }
                                 return null;
                               },
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.email, color: AppColors.color1),
-                                hintText: "Email",
+                                hintText: S.of(context).emailHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             TextFormField(
                               obscureText: true,
                               onChanged: (data) => password = data,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return S.of(context).pleaseEnterPassword;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.lock, color: AppColors.color1),
-                                hintText: "Password",
+                                hintText: S.of(context).passwordHint,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             SizedBox(
                               width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
                                 onPressed: () async {
                                   if (formKey.currentState!.validate()) {
-                                    isLoading = true;
-                                    setState(() {});
+                                    setState(() => isLoading = true);
 
                                     try {
                                       await registerUser(role!);
-                                      Navigator.pushNamed(context, LoginScreen.id, arguments: role);
+                                      Navigator.pushNamed(
+                                        context,
+                                        LoginScreen.id,
+                                        arguments: role,
+                                      );
                                     } on Exception catch (e) {
-                                      showSnackBar(context, 'Registration failed: $e');
+                                      showSnackBar(context, '${S.of(context).userRegistrationFailed} $e');
                                     }
 
-                                    isLoading = false;
-                                    setState(() {});
+                                    setState(() => isLoading = false);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -169,20 +171,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                child: Text("Sign Up",
-                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                                child: Text(
+                                  S.of(context).signUp,
+                                  style: const TextStyle(fontSize: 18, color: Colors.white),
+                                ),
                               ),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Already have an account? ",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                  S.of(context).alreadyHaveAccount,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 InkWell(
                                   onTap: () => Navigator.pushNamed(
@@ -191,11 +196,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     arguments: role,
                                   ),
                                   child: Text(
-                                    "Sign In",
+                                    S.of(context).signIn,
                                     style: TextStyle(
-                                        color: AppColors.color1,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                      color: AppColors.color1,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 )
                               ],
@@ -214,23 +220,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
- Future<void> registerUser(String role) async {
+  Future<void> registerUser(String role) async {
     try {
-      print('Attempting to register user with email: $email and role: $role');
       final response = await Supabase.instance.client.auth.signUp(
         email: email!,
         password: password!,
       );
 
       if (response.user == null) {
-        print('Registration failed: User is null');
-        showSnackBar(context, "User registration failed.");
+        showSnackBar(context, S.of(context).userRegistrationFailed);
         return;
       }
 
-      print('User registered successfully: ${response.user!.id}');
-
-      // Save user role in Supabase table
       await Supabase.instance.client.from('users').insert({
         'id': response.user!.id,
         'email': email,
@@ -239,12 +240,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      print('User data saved to Supabase');
-      showSnackBar(context, "User registered successfully!");
+      showSnackBar(context, S.of(context).userRegistrationSuccess);
     } on Exception catch (e) {
-      print('Error during registration: $e');
-      showSnackBar(context, 'Registration failed: $e');
+      showSnackBar(context, '${S.of(context).userRegistrationFailed} $e');
     }
   }
-  }
-
+}

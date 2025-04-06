@@ -1,4 +1,5 @@
 import 'package:clinicc/features/auth/pages/rest_password.dart';
+import 'package:clinicc/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
@@ -6,8 +7,9 @@ class ForgetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Colors.blue.shade800, 
+      backgroundColor: Colors.blue.shade800,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -20,24 +22,24 @@ class ForgetPasswordScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Forget Password",
-                  style: TextStyle(
+                Text(
+                  S.of(context).forgotPassword,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Enter your email for verification. We will send a 6-digit code.",
+                Text(
+                  S.of(context).forgetPasswordDescription,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
                 TextField(
                   decoration: InputDecoration(
-                    labelText: "Email",
-                    prefixIcon: Icon(Icons.email),
-                    border: OutlineInputBorder(),
+                    labelText: S.of(context).emailLabel,
+                    prefixIcon: const Icon(Icons.email),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -50,11 +52,14 @@ class ForgetPasswordScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ResetPasswordScreen(),
+                        builder: (context) => const ResetPasswordScreen(),
                       ),
                     );
                   },
-                  child: const Text("Continue", style: TextStyle(color: Colors.white)),
+                  child: Text(
+                    S.of(context).continuee,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
