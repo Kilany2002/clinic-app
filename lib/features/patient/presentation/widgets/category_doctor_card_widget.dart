@@ -20,7 +20,14 @@ class CategoryDoctorCardWidget extends StatelessWidget {
         children: [
           if (isList) ...[
             Image.network(doctor.imageUrl,
-                width: 125, height: 140, fit: BoxFit.cover),
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.error,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                width: 125,
+                height: 140,
+                fit: BoxFit.cover),
             SizedBox(width: 10),
           ],
           Expanded(
@@ -28,6 +35,11 @@ class CategoryDoctorCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(doctor.name,
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold)),
+                Text("${doctor.experience} Years Experience",
                     style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -46,7 +58,14 @@ class CategoryDoctorCardWidget extends StatelessWidget {
           ),
           if (!isList)
             Image.network(doctor.imageUrl,
-                width: 100, height: 115, fit: BoxFit.cover),
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.error,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                width: 100,
+                height: 115,
+                fit: BoxFit.cover),
         ],
       ),
     );

@@ -8,11 +8,13 @@ import '../../../../core/functions/routing.dart';
 class CategrySpecialistCard extends StatelessWidget {
   final String imageUrl;
   final String titleCat;
+  final int categoryId;
 
   const CategrySpecialistCard({
     super.key,
     required this.imageUrl,
     required this.titleCat,
+    required this.categoryId,
   });
 
   @override
@@ -61,7 +63,7 @@ class CategrySpecialistCard extends StatelessWidget {
             children: [
               IconButton(
                   onPressed: () {
-                    pushReplacement(context, DoctorsCategoryView());
+                    pushReplacement(context, DoctorsCategoryView(categoryId: categoryId,));
                   },
                   icon: Icon(Icons.arrow_forward_ios,
                       color: Colors.white, size: 30)),

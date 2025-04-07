@@ -43,7 +43,7 @@ class SpecializationCard extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     push(context,
-                        SpecializationView(categoryName: category['name']));
+                        SpecializationView(categoryName: category['name'], categoryId: category['id'],));
                   },
                   child: Stack(
                     children: [

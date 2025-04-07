@@ -1,6 +1,7 @@
+import 'package:clinicc/core/functions/routing.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
-import 'package:clinicc/features/patient/data/model/category_list.dart';
+import 'package:clinicc/features/home/data/model/category_service.dart';
 import 'package:clinicc/features/patient/presentation/widgets/categry_specialist_card.dart';
 import 'package:flutter/material.dart';
 
@@ -13,43 +14,51 @@ class CategoryView extends StatelessWidget {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Category',
+          leading: IconButton(
+            onPressed: () => pushNamedAndRemoveUntil(context, 'BottomNavBar'),
+            icon: const Icon(Icons.arrow_back, color: AppColors.white),
+          ),
           actions: [
             IconButton(
                 onPressed: () {},
-                icon: Icon(
-                  Icons.search,
-                  size: 30,
-                  color: AppColors.white,
-                ))
+                icon: const Icon(Icons.search, size: 30, color: AppColors.white)),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              children: [
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: categoryList.length,
-                  itemBuilder: (context, index) {
-                    final item = categoryList[index];
+        body: FutureBuilder<List<Map<String, dynamic>>>(
+          future: CategoryService().fetchCategories(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No categories found.'));
+            }
 
-                    return CategrySpecialistCard(
-                      imageUrl: item['imageUrl']!,
-                      titleCat: item['titleCat']!,
-                    );
-                  },
+            final categories = snapshot.data!;
+
+            return Padding(
+              padding: const EdgeInsets.all(15),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8,
                 ),
-              ],
-            ),
-          ),
+                itemCount: categories.length,
+                itemBuilder: (context, index) {
+                  final item = categories[index];
+
+                  return CategrySpecialistCard(
+                    imageUrl: item['image_url'] ?? '',
+                    titleCat: item['name'] ?? 'Unknown',
+                    categoryId: item['id'] ?? 0,
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );

@@ -5,7 +5,6 @@ import 'package:clinicc/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'onboarding_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // تأكد من استيراد هذا إذا كنت تستخدم الترجمات
 
 class OnboardingScreen extends StatefulWidget {
   @override

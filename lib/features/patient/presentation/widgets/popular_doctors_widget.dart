@@ -22,7 +22,14 @@ class PopularDoctorCard extends StatelessWidget {
         children: [
           Center(
               child: Image.network(doctor.imageUrl,
-                  width: 94, height: 113, fit: BoxFit.cover)),
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.error,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                  width: 94,
+                  height: 113,
+                  fit: BoxFit.cover)),
           SizedBox(height: 5),
           Text(doctor.name,
               style: getbodyStyle(
