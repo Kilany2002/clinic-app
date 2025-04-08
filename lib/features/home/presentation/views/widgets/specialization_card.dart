@@ -42,8 +42,16 @@ class SpecializationCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: GestureDetector(
                   onTap: () {
-                    push(context,
-                        SpecializationView(categoryName: category['name'], categoryId: category['id'],));
+                    final categoryName = category['name'] ?? 'Unknown';
+                    final categoryId = category['id'] ?? 0;
+                    print('Tapped categoryId: $categoryId');
+                    push(
+                      context,
+                      SpecializationView(
+                        categoryName: categoryName,
+                        categoryId: categoryId,
+                      ),
+                    );
                   },
                   child: Stack(
                     children: [

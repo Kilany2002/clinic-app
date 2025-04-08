@@ -1,4 +1,5 @@
 import 'package:clinicc/features/doctor/logic/doctor_service.dart';
+import 'package:clinicc/features/patient/data/model/doctor_category_list.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
@@ -20,12 +21,12 @@ class SpecializationView extends StatefulWidget {
 
 class _SpecializationViewState extends State<SpecializationView> {
   final DoctorService doctorService = DoctorService();
-  late Future<List<Map<String, dynamic>>> doctorsFuture;
+  late Future<List<Doctor>> doctorsFuture;
 
   @override
   void initState() {
     super.initState();
-   // doctorsFuture = doctorService.fetchDoctorsByCategory();
+    doctorsFuture = doctorService.fetchDoctorsByCategory(widget.categoryId);
   }
 
   @override
@@ -45,7 +46,7 @@ class _SpecializationViewState extends State<SpecializationView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: FutureBuilder<List<Map<String, dynamic>>>(
+        child: FutureBuilder<List<Doctor>>(
           future: doctorsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -53,7 +54,8 @@ class _SpecializationViewState extends State<SpecializationView> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No doctors available in this category.'));
+              return const Center(
+                  child: Text('No doctors available in this category.'));
             }
 
             final doctors = snapshot.data!;
@@ -64,7 +66,6 @@ class _SpecializationViewState extends State<SpecializationView> {
 
                 return GestureDetector(
                   onTap: () {
-                    // TODO: Navigate to doctor's profile
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -78,8 +79,8 @@ class _SpecializationViewState extends State<SpecializationView> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            doctor['image_url'] != null && doctor['image_url'].isNotEmpty
-                                ? doctor['image_url']
+                            doctor.imageUrl.isNotEmpty
+                                ? doctor.imageUrl
                                 : 'https://cdn.pixabay.com/photo/2022/06/09/04/51/robot-7251710_1280.png',
                             width: 100,
                             height: 120,
@@ -92,7 +93,7 @@ class _SpecializationViewState extends State<SpecializationView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                doctor['name'] ?? 'Unknown',
+                                doctor.name,
                                 style: getTitleStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -100,7 +101,7 @@ class _SpecializationViewState extends State<SpecializationView> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                doctor['description'] ?? 'No description available',
+                                doctor.description,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.white70,
@@ -109,16 +110,21 @@ class _SpecializationViewState extends State<SpecializationView> {
                               ),
                               Row(
                                 children: [
-                                  const Icon(Icons.star, color: Colors.yellow, size: 25),
+                                  const Icon(Icons.star,
+                                      color: Colors.yellow, size: 25),
                                   Text(
-                                    doctor['rating']?.toString() ?? "4.5",
-                                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                                    doctor.rating != null
+                                        ? doctor.rating.toString()
+                                        : "N/A",
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Colors.white),
                                   ),
                                 ],
                               ),
                               Text(
-                                "Price: \$${doctor['price']?.toString() ?? 'N/A'}",
-                                style: const TextStyle(fontSize: 14, color: Colors.white70),
+                                "Price: \$${doctor.price != null ? doctor.price.toString() : 'N/A'}",
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.white70),
                               ),
                             ],
                           ),
