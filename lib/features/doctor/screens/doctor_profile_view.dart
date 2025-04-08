@@ -1,6 +1,8 @@
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:clinicc/features/doctor/logic/doctor_profile_controller.dart';
+import 'package:clinicc/features/doctor/screens/doctor_edit_profile_view.dart';
 import 'package:flutter/material.dart';
+import '../../../pages/role_screen.dart';
 import '../widgets/menu_item.dart';
 
 class DoctorProfileView extends StatefulWidget {
@@ -54,6 +56,22 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
       );
     } finally {
       setState(() {});
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    try {
+      await _controller.supabase.auth.signOut();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const RoleSelectionScreen()),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to logout: $e')),
+      );
     }
   }
 
@@ -124,11 +142,25 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
             Expanded(
               child: ListView(
                 children: [
-                  buildMenuItem(Icons.privacy_tip, 'Privacy'),
-                  buildMenuItem(Icons.history, 'Purchase History'),
-                  buildMenuItem(Icons.help, 'Help & Support'),
+                  GestureDetector(
+                    child: buildMenuItem(Icons.person, 'My Profile'),
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DoctorEditProfileView(),
+                        ),
+                      );
+                      if (result == true) {
+                        await _loadData();
+                      }
+                    },
+                  ),
                   buildMenuItem(Icons.settings, 'Settings'),
-                  buildMenuItem(Icons.logout, 'Logout'),
+                  GestureDetector(
+                    child: buildMenuItem(Icons.logout, 'Logout'),
+                    onTap: _handleLogout,
+                  ),
                 ],
               ),
             ),

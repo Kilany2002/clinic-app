@@ -24,7 +24,7 @@ class BasicInfoStep extends StatelessWidget {
     );
   },
   image: controller.image,
-  imageUrl: controller.imageUrl, // Add this parameter
+  imageUrl: controller.imageUrl, 
 ),
         const SizedBox(height: 20),
         TextFormField(

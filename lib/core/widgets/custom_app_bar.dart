@@ -7,13 +7,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final List<Widget>? actions;
   final bool? centerTitle;
-
+  final bool showBackArrow;
   const CustomAppBar({
     super.key,
     this.title,
     this.leading,
     this.actions,
     this.centerTitle,
+    this.showBackArrow = false,
   });
 
   @override
@@ -28,9 +29,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       centerTitle: centerTitle ?? true,
-      leading: leading,
+      leading: _buildLeading(context),
       actions: actions,
+      automaticallyImplyLeading: false,
     );
+  }
+
+  Widget? _buildLeading(BuildContext context) {
+    if (leading != null) return leading;
+
+    if (showBackArrow && Navigator.canPop(context)) {
+      return IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.pop(context),
+      );
+    }
+    return null;
   }
 
   @override

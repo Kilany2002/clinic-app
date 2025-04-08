@@ -19,7 +19,7 @@ class _LocationPickerState extends State<LocationPicker> {
   late GoogleMapController mapController;
   LatLng? _selectedLocation;
   final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(30.0444, 31.2357), // Default to Cairo
+    target: LatLng(30.0444, 31.2357), 
     zoom: 12,
   );
 

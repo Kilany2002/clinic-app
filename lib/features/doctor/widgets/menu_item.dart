@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/utils/colors.dart';
 
-Widget buildMenuItem(IconData icon, String title) {
+// Update in menu_item.dart
+Widget buildMenuItem(IconData icon, String title, {VoidCallback? onTap}) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
     child: Container(
@@ -18,7 +19,7 @@ Widget buildMenuItem(IconData icon, String title) {
         ),
         trailing: const Icon(Icons.arrow_forward_ios,
             color: Colors.white54, size: 16),
-        onTap: () {},
+        onTap: onTap, 
       ),
     ),
   );
