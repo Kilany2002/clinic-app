@@ -10,6 +10,7 @@ class AppColors {
   static const Color greyColor = Color(0xFFB4AAAA);
   static const Color white = Color(0xFFFFFFFF);
   static const Color redColor = Color(0xFFFF0000);
+  static const Color orange = Color(0xFFFFA500);
 }
 
 /// Supabase client

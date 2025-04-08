@@ -1,9 +1,7 @@
 import 'package:clinicc/core/constants/functions/show_snack_bar.dart';
 import 'package:clinicc/core/functions/routing.dart';
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/auth/widgets/customButton.dart';
 import 'package:clinicc/pages/register_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

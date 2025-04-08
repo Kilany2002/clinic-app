@@ -48,7 +48,6 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
           padding: const EdgeInsets.all(15),
           child: Consumer<DoctorProvider>(
             builder: (context, doctorProvider, child) {
-              // Show Skeleton while loading doctor data
               if (doctorProvider.doctorName == null) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,14 +60,11 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                   ],
                 );
               }
-
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Doctor Greeting
                   DoctorGreeting(doctorName: doctorProvider.doctorName),
 
-                  // Work Date Timeline
                   if (doctorProvider.workDays.isNotEmpty)
                     WorkDateTimeline(
                       workDays: doctorProvider.workDays,
@@ -76,10 +72,7 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         doctorProvider.setSelectedDate(date);
                       },
                     ),
-
                   const SizedBox(height: 20),
-
-                  // Quick Actions and Stat Card
                   if (doctorProvider.selectedDate != null)
                     Row(
                       children: [
@@ -101,16 +94,12 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                         ),
                       ],
                     ),
-
                   const SizedBox(height: 20),
-
-                  // Patients by Date Section
                   if (doctorProvider.selectedDate != null)
                     Text('Patients by Date', style: getTitleStyle()),
 
                   const SizedBox(height: 10),
 
-                  // Show Skeleton Loader while patients are loading
                   if (doctorProvider.selectedDate == null ||
                       doctorProvider
                               .patientsByDate[doctorProvider.selectedDate] ==
@@ -125,11 +114,9 @@ class _DoctorHomeViewState extends State<DoctorHomeView> {
                                     width: double.infinity, height: 80),
                               )),
                     )
-                  // Empty State
                   else if (doctorProvider
                       .patientsByDate[doctorProvider.selectedDate]!.isEmpty)
                     const Center(child: Text("No patients for this date"))
-                  // Patient List
                   else
                     Expanded(
                       child: PatientList(

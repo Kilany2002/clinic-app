@@ -1,5 +1,5 @@
+import 'package:clinicc/features/doctor/logic/doctor_service.dart';
 import 'package:flutter/material.dart';
-import 'package:clinicc/features/doctor/services/doctor_service.dart';
 import 'package:intl/intl.dart';
 
 class DoctorProvider with ChangeNotifier {
@@ -18,7 +18,7 @@ class DoctorProvider with ChangeNotifier {
 
   Future<void> fetchDoctorData() async {
     try {
-      final doctorData = await _doctorService.fetchDoctorData();
+      final doctorData = await _doctorService.fetchCurrentDoctorData();
       if (doctorData != null) {
         _doctorName = doctorData['name'] ?? 'Unknown Doctor';
         _workDays = doctorData['destinations'] != null

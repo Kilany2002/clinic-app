@@ -1,4 +1,3 @@
-import 'package:clinicc/core/functions/local_storage.dart';
 import 'package:clinicc/features/doctor/logic/doctor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
@@ -29,7 +28,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
     super.initState();
     userDataFuture =
         patientService.fetchUserName(); 
-    doctorsFuture = doctorService.fetchDoctors();
+    doctorsFuture = doctorService.fetchAllDoctors();
   }
 
   @override

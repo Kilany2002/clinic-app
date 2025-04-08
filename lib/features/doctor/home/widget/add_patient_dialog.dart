@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/doctor/services/patient_service.dart';
+import 'package:clinicc/features/doctor/logic/patient_service.dart';
 
 class AddPatientDialog extends StatefulWidget {
   final DateTime selectedDate; // Changed to DateTime
