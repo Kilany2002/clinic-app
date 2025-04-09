@@ -2,9 +2,9 @@ import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../logic/doctor_form_controller.dart';
-import '../widgets/basic_info_step.dart';
-import '../widgets/destination_step.dart';
-import '../widgets/experience_step.dart';
+import '../widgets/form/basic_info_step.dart';
+import '../widgets/form/destination_step.dart';
+import '../widgets/form/experience_step.dart';
 
 class DoctorFormScreen extends StatefulWidget {
   const DoctorFormScreen({super.key});

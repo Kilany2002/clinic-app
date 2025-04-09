@@ -1,8 +1,8 @@
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/doctor/widgets/days_selector.dart';
-import 'package:clinicc/features/doctor/widgets/time_slots_list.dart';
+import 'package:clinicc/features/doctor/widgets/form/days_selector.dart';
+import 'package:clinicc/features/doctor/widgets/form/time_slots_list.dart';
 import 'package:flutter/material.dart';
-import '../logic/doctor_form_controller.dart';
+import '../../logic/doctor_form_controller.dart';
 
 class DestinationsStep extends StatelessWidget {
   const DestinationsStep({

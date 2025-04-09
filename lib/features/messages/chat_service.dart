@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:clinicc/features/notifications/push_notification_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatService {
@@ -51,6 +52,33 @@ class ChatService {
     }
 
     await _supabase.from('messages').insert(messageData);
+
+    // 🔔 Get receiver's FCM token and sender's name
+    final receiverProfile = await _supabase
+        .from('users')
+        .select('fcm_token, name')
+        .eq('id', receiverId)
+        .single();
+
+    final senderProfile =
+        await _supabase.from('users').select('name').eq('id', user.id).single();
+
+    final fcmToken = receiverProfile['fcm_token'];
+    final receiverName = receiverProfile['name'];
+    final senderName = senderProfile['name'];
+
+    if (fcmToken != null && fcmToken.toString().isNotEmpty) {
+      await sendNotification(
+        token: fcmToken,
+        title: 'Clinic App - $senderName',
+        body: messageText,
+        data: {
+          'screen': 'chat',
+          'senderId': user.id,
+          'senderName': senderName,
+        },
+      );
+    }
   }
 
   Future<void> markMessagesAsRead(List<String> messageIds) async {

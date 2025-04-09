@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/widgets/profile_image_picker.dart';
-import '../logic/doctor_form_controller.dart';
+import '../../logic/doctor_form_controller.dart';
 
 class BasicInfoStep extends StatelessWidget {
   const BasicInfoStep({

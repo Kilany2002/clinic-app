@@ -1,6 +1,7 @@
 import 'package:clinicc/core/constants/functions/show_snack_bar.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/pages/login_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -214,35 +215,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
   Future<void> registerUser(String role) async {
-    try {
-      print('Attempting to register user with email: $email and role: $role');
-      final response = await Supabase.instance.client.auth.signUp(
-        email: email!,
-        password: password!,
-      );
+  try {
+    print('Attempting to register user with email: $email and role: $role');
+    final response = await Supabase.instance.client.auth.signUp(
+      email: email!,
+      password: password!,
+    );
 
-      if (response.user == null) {
-        print('Registration failed: User is null');
-        showSnackBar(context, "User registration failed.");
-        return;
-      }
-
-      print('User registered successfully: ${response.user!.id}');
-
-      // Save user role in Supabase table
-      await Supabase.instance.client.from('users').insert({
-        'id': response.user!.id,
-        'email': email,
-        'role': role,
-        'name': name,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-
-      print('User data saved to Supabase');
-      showSnackBar(context, "User registered successfully!");
-    } on Exception catch (e) {
-      print('Error during registration: $e');
-      showSnackBar(context, 'Registration failed: $e');
+    if (response.user == null) {
+      print('Registration failed: User is null');
+      showSnackBar(context, "User registration failed.");
+      return;
     }
+
+    print('User registered successfully: ${response.user!.id}');
+
+    // 🔔 Get the FCM token
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    print('FCM Token: $fcmToken');
+
+    // Save user info including FCM token in Supabase table
+    await Supabase.instance.client.from('users').insert({
+      'id': response.user!.id,
+      'email': email,
+      'role': role,
+      'name': name,
+      'fcm_token': fcmToken,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+
+    print('User data saved to Supabase');
+    showSnackBar(context, "User registered successfully!");
+  } on Exception catch (e) {
+    print('Error during registration: $e');
+    showSnackBar(context, 'Registration failed: $e');
   }
+}
 }

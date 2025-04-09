@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../logic/doctor_form_controller.dart';
+import '../../logic/doctor_form_controller.dart';
 
 class ExperienceStep extends StatelessWidget {
   final DoctorFormController controller;

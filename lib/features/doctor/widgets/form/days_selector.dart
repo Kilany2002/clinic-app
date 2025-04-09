@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/utils/colors.dart';
-import '../logic/doctor_form_controller.dart';
+import '../../../../core/utils/colors.dart';
+import '../../logic/doctor_form_controller.dart';
 
 class DaysSelector extends StatelessWidget {
   const DaysSelector({

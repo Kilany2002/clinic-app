@@ -3,7 +3,7 @@ import 'package:clinicc/features/doctor/logic/doctor_profile_controller.dart';
 import 'package:clinicc/features/doctor/screens/doctor_edit_profile_view.dart';
 import 'package:flutter/material.dart';
 import '../../../pages/role_screen.dart';
-import '../widgets/menu_item.dart';
+import '../widgets/form/menu_item.dart';
 
 class DoctorProfileView extends StatefulWidget {
   const DoctorProfileView({super.key});

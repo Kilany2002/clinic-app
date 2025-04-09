@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import '../logic/doctor_form_controller.dart';
+import '../../logic/doctor_form_controller.dart';
 class TimeSlotSelector extends StatelessWidget {
   const TimeSlotSelector({
     super.key,
