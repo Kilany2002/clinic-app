@@ -1,6 +1,6 @@
 import 'package:clinicc/core/functions/local_storage.dart';
 import 'package:clinicc/core/utils/colors.dart';
-import 'package:clinicc/features/notifications/massagaing_config.dart';
+import 'package:clinicc/features/notifications/messaging_config.dart';
 import 'package:clinicc/features/patient/presentation/views/bottom_nav_bar.dart';
 import 'package:clinicc/features/patient/presentation/views/chat_view.dart';
 import 'package:clinicc/firebase_options.dart';
