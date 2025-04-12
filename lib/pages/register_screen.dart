@@ -241,6 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       'role': role,
       'name': name,
       'fcm_token': fcmToken,
+      'phone_number': phoneNumber,
       'created_at': DateTime.now().toIso8601String(),
     });
 

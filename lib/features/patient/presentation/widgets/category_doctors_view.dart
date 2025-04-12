@@ -1,7 +1,8 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
-import 'package:clinicc/features/patient/presentation/views/bottom_nav_bar.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
+
+import 'package:clinicc/features/home/data/model/doctor_service.dart';
 import 'package:clinicc/features/patient/data/model/doctor_category_list.dart';
 import 'package:clinicc/features/patient/presentation/widgets/category_doctor_card_widget.dart';
 import 'package:clinicc/features/patient/presentation/widgets/doctor_profile_cat.dart';
@@ -11,18 +12,26 @@ import 'package:flutter/material.dart';
 import '../../../../core/functions/routing.dart';
 
 class DoctorsCategoryView extends StatefulWidget {
-  const DoctorsCategoryView({super.key});
+  final int categoryId;
+
+  const DoctorsCategoryView({super.key, required this.categoryId});
 
   @override
-  _DoctorsCategoryViewState createState() {
-    return _DoctorsCategoryViewState();
-  }
+  _DoctorsCategoryViewState createState() => _DoctorsCategoryViewState();
 }
 
 class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
   bool isGridView = false;
-  List<Doctor> doctors = DoctorRepository.fetchDoctors();
-  List<Doctor> popularDoctors = DoctorRepository.fetchPopularDoctors();
+  late Future<List<Doctor>> doctorsFuture;
+  late Future<List<Doctor>> popularDoctorsFuture;
+  final DoctorService doctorService = DoctorService();
+
+  @override
+  void initState() {
+    super.initState();
+    doctorsFuture = doctorService.fetchDoctorsByCategory(widget.categoryId);
+    popularDoctorsFuture = doctorService.fetchPopularDoctors(widget.categoryId);
+  }
 
   void toggleView() {
     setState(() {
@@ -35,16 +44,11 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
     return SafeArea(
       child: Scaffold(
         appBar: CustomAppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.white),
-            onPressed: () {
-              pushReplacement(context, BottomNavBar());
-            },
-          ),
+          title: 'Doctors',
+          showBackArrow: true,
         ),
         body: Column(
           children: [
-            // Popular Doctors Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Column(
@@ -54,15 +58,27 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
                       style: getTitleStyle(
                           fontSize: 24, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
-                  SizedBox(
-                    height: 190,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: popularDoctors.length,
-                      itemBuilder: (context, index) {
-                        return PopularDoctorCard(popularDoctors[index]);
-                      },
-                    ),
+                  FutureBuilder<List<Doctor>>(
+                    future: popularDoctorsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError ||
+                          !snapshot.hasData ||
+                          snapshot.data!.isEmpty) {
+                        return Center(child: Text('لا يوجد أطباء مشهورين'));
+                      }
+                      return SizedBox(
+                        height: 190,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            return PopularDoctorCard(snapshot.data![index]);
+                          },
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 41),
                   Divider(
@@ -93,45 +109,56 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
                 ],
               ),
             ),
-
             Expanded(
-              child: isGridView
-                  ? GridView.builder(
-                      padding: EdgeInsets.all(5),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount: doctors.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                            onTap: () {
-                              push(
-                                  context,
-                                  DoctorProfileCat(
-                                    doctor: doctors[index],
-                                  ));
-                            },
-                            child: CategoryDoctorCardWidget(doctors[index]));
-                      },
-                    )
-                  : ListView.builder(
-                      padding: EdgeInsets.all(10),
-                      itemCount: doctors.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                            onTap: () {
-                              push(
-                                  context,
-                                  DoctorProfileCat(
-                                    doctor: doctors[index],
-                                  ));
-                            },
-                            child: CategoryDoctorCardWidget(doctors[index]));
-                      },
-                    ),
+              child: FutureBuilder<List<Doctor>>(
+                future: doctorsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError ||
+                      !snapshot.hasData ||
+                      snapshot.data!.isEmpty) {
+                    return Center(child: Text('لا يوجد أطباء لهذه الفئة'));
+                  }
+
+                  final doctors = snapshot.data!;
+
+                  return isGridView
+                      ? GridView.builder(
+                          padding: EdgeInsets.all(5),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.8,
+                          ),
+                          itemCount: doctors.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                push(context,
+                                    DoctorProfileCat(doctor: doctors[index]));
+                              },
+                              child: CategoryDoctorCardWidget(doctors[index]),
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.all(10),
+                          itemCount: doctors.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                push(context,
+                                    DoctorProfileCat(doctor: doctors[index]));
+                              },
+                              child: CategoryDoctorCardWidget(doctors[index]),
+                            );
+                          },
+                        );
+                },
+              ),
             ),
           ],
         ),
@@ -139,5 +166,3 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
     );
   }
 }
-
-

@@ -25,8 +25,6 @@ Future<void> sendNotification({
   required Map<String, String> data,
 }) async {
   final String accessToken = await getAccessToken();
-
-  // ❌ FIX THIS LINE: Remove double quotes from project ID
   const String projectId = 'clinc-42669';
   final String fcmUrl = 'https://fcm.googleapis.com/v1/projects/$projectId/messages:send';
 

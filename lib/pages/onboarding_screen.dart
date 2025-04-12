@@ -1,8 +1,8 @@
 import 'package:clinicc/core/utils/colors.dart';
-
+import 'package:clinicc/generated/l10n.dart';
+import 'package:clinicc/pages/language.dart';
 import 'package:clinicc/pages/role_screen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'onboarding_page.dart';
 
@@ -18,21 +18,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   List<Map<String, String>> pages = [
     {
       'image': 'assets/images/doctor.jpg',
-      'title': 'Choose your doctor',
-      'description':
-          'Application provides you with a lot of experienced doctors...',
+      'title': 'chooseDoctor',
+      'description': 'doctorDescription',
     },
     {
       'image': 'assets/images/calendar.jpg',
-      'title': 'Choose date and time',
-      'description':
-          'The application can help you choose the appropriate date and time for you and the selected doctor.',
+      'title': 'chooseDateTime',
+      'description': 'dateTimeDescription',
     },
     {
       'image': 'assets/images/chat.jpg',
-      'title': 'Communicate with your doctor',
-      'description':
-          'Once you access the profile of doctor you selected, you can communicate with him and send any message.',
+      'title': 'communicateWithDoctor',
+      'description': 'chatDescription',
     }
   ];
 
@@ -51,28 +48,51 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             itemBuilder: (context, index) {
               return OnboardingPage(
                 image: pages[index]['image']!,
-                title: pages[index]['title']!,
-                description: pages[index]['description']!,
+                title: S.of(context).chooseDoctor,
+                description:
+                    S.of(context).doctorDescription,
               );
             },
           ),
+
           Positioned(
             top: 50,
             right: 20,
             child: _currentPage != pages.length - 1
-                ? TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RoleSelectionScreen()),
-                      );
-                    },
-                    child: Text('Skip',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                ? Row(
+                    children: [
+                      LanguageDropdown(
+                        onChanged: (lang) {
+                          if (lang == 'English') {
+                            S.load(Locale('en', 'US'));
+                            print("Language set to English");
+                          } else if (lang == 'العربية') {
+                            S.load(Locale('ar', 'AR'));
+                            print("Language set to Arabic");
+                          }
+                          setState(() {});
+                        },
+                      ),
+                      SizedBox(width: 20),
+                      // زر السكيب
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RoleSelectionScreen()),
+                          );
+                        },
+                        child: Text(S.of(context).skip, // ترجم السكيب هنا
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16)),
+                      ),
+                    ],
                   )
                 : SizedBox(),
           ),
+
+          // جزء المعلومات والتفاعلات
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -87,12 +107,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    pages[_currentPage]['title']!,
+                    S.of(context).chooseDoctor, // ترجم العنوان هنا
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    pages[_currentPage]['description']!,
+                    S.of(context).doctorDescription, // ترجم الوصف هنا
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   Spacer(),
@@ -128,8 +148,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Row(
                           children: [
                             Text(_currentPage == pages.length - 1
-                                ? 'Start'
-                                : 'Next'),
+                                ? S.of(context).start // ترجم هنا
+                                : S.of(context).next), // ترجم هنا
                             SizedBox(width: 5),
                             Icon(Icons.arrow_forward),
                           ],

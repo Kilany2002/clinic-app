@@ -117,7 +117,6 @@ class MessagingConfig {
   static void handleNotification(BuildContext context, Map<String, dynamic> data) {
     log('Handling notification with data: $data');
 
-    // Example: navigate based on "screen" value in data payload
     if (data.containsKey('screen')) {
       String screen = data['screen'];
 

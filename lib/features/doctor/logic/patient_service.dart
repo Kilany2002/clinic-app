@@ -44,13 +44,9 @@ class PatientService {
             "Doctor profile not found. Please create a doctor profile first.");
         return false;
       }
-
-      // Get the last order number for the selected date
       final lastOrderNumber = await getLastOrderNumberForDate(date);
       final orderNumber =
-          lastOrderNumber + 1; // Increment by 1 (this is an int)
-
-      // Debugging: Print the data being inserted
+          lastOrderNumber + 1; 
       print({
         'name': name,
         'age': age,
@@ -60,7 +56,6 @@ class PatientService {
         'date': date.toIso8601String(),
       });
 
-      // Insert the patient into the database
       final response = await _supabase.from('patients').insert({
         'name': name, // String
         'age': age, // int
@@ -70,7 +65,6 @@ class PatientService {
         'date': date.toIso8601String(), // String (ISO 8601 format)
       });
 
-      // Use null-aware operator to check for errors
       if (response?.error != null) {
         ErrorHandler.showError(context, "Error: ${response!.error!.message}");
         return false;

@@ -1,3 +1,4 @@
+import 'package:clinicc/features/doctor/widgets/location_picker.dart';
 import 'package:clinicc/features/doctor/widgets/profile/days_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
@@ -48,6 +49,30 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
     super.dispose();
   }
 
+  void _updateDestinationLocation(int index, String location) {
+    setState(() {
+      _destinations[index]['location'] = location;
+    });
+  }
+
+  Future<void> _pickLocation(int index) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationPickerScreen(
+          onLocationSelected: (latLng, address) {
+            _updateDestinationLocation(index, address);
+            return address;
+          },
+        ),
+      ),
+    );
+    if (result != null) {
+      _updateDestinationLocation(index, result);
+    }
+  }
+
+// Modify the _loadData method to include location:
   Future<void> _loadData() async {
     await _controller.fetchUserData();
     if (mounted) {
@@ -64,6 +89,7 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
               'days': List<String>.from(dest['days'] ?? []),
               'timeSlots':
                   List<Map<String, dynamic>>.from(dest['timeSlots'] ?? []),
+              'location': dest['location']?.toString() ?? '',
             };
           }).toList();
         }
@@ -115,6 +141,7 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
         'timeSlots': [
           {'from': null, 'to': null}
         ],
+        'location': '',
       });
     });
   }
@@ -162,6 +189,7 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: ('Edit Profile'),
+        showBackArrow: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -275,6 +303,8 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
                 final destination = entry.value;
 
                 return Card(
+                  color: Colors.white,
+                  elevation: 5,
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -303,7 +333,24 @@ class _DoctorEditProfileViewState extends State<DoctorEditProfileView> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
+                        ListTile(
+                          leading: const Icon(Icons.location_on),
+                          title: Text(
+                            destination['location']?.isNotEmpty ?? false
+                                ? destination['location']
+                                : 'Select Location',
+                            style: TextStyle(
+                              color:
+                                  destination['location']?.isNotEmpty ?? false
+                                      ? Colors.black
+                                      : Colors.grey,
+                            ),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () => _pickLocation(index),
+                        ),
+                        const SizedBox(height: 8),
                         DaysSelector(
                           days: destination['days'],
                           onDaySelected: (day) =>

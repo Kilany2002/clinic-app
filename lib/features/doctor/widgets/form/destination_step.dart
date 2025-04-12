@@ -50,7 +50,23 @@ class DestinationsStep extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
+                  ListTile(
+                    leading: const Icon(Icons.location_on),
+                    title: Text(
+                      destination['location']?.isNotEmpty ?? false
+                          ? destination['location']
+                          : 'Select Location',
+                      style: TextStyle(
+                        color: destination['location']?.isNotEmpty ?? false
+                            ? Colors.black
+                            : Colors.grey,
+                      ),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () => controller.pickLocation(context, index),
+                  ),
+                  const SizedBox(height: 8),
                   DaysSelector(
                       controller: controller,
                       destinationIndex: index,

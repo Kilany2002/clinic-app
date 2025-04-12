@@ -1,9 +1,9 @@
 import 'package:clinicc/core/utils/colors.dart';
+import 'package:clinicc/features/home/presentation/views/profile/screens/profile_screen/widgets/profile_content_screen.dart';
 import 'package:clinicc/features/patient/presentation/views/category_view.dart';
 import 'package:clinicc/features/messages/conversations_screen.dart';
 import 'package:clinicc/features/patient/presentation/views/patient_home_view.dart';
 import 'package:flutter/material.dart';
-import 'profile_view.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -16,10 +16,10 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int index = 0;
   List<Widget> pages = [
-    PatientHomeView(), 
+    PatientHomeView(),
     CategoryView(),
     ConversationsScreen(),
-    ProfileView()
+    ProfileContentScreen()
   ];
 
   @override

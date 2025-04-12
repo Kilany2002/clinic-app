@@ -52,8 +52,6 @@ class ChatService {
     }
 
     await _supabase.from('messages').insert(messageData);
-
-    // 🔔 Get receiver's FCM token and sender's name
     final receiverProfile = await _supabase
         .from('users')
         .select('fcm_token, name')
@@ -64,7 +62,6 @@ class ChatService {
         await _supabase.from('users').select('name').eq('id', user.id).single();
 
     final fcmToken = receiverProfile['fcm_token'];
-    final receiverName = receiverProfile['name'];
     final senderName = senderProfile['name'];
 
     if (fcmToken != null && fcmToken.toString().isNotEmpty) {

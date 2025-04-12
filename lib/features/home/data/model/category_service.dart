@@ -12,7 +12,7 @@ class CategoryService {
         return {
           "id": category["id"] ?? 0,
           "name": category["name"] ?? "Unknown",
-          "image_url": category["image_url"] ??
+          "image": category["image"] ??
               "https://cdn.pixabay.com/photo/2022/06/09/04/51/robot-7251710_1280.png", // صورة افتراضية
         };
       }).toList();

@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 class ChatScreen extends StatefulWidget {
   final String userId;
   final String userName;
+    static String id = 'chat';
+
 
   const ChatScreen({super.key, required this.userId, required this.userName});
 

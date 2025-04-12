@@ -27,4 +27,6 @@ class AppLocalStorage {
   static dynamic getCachData({required String key}) {
     return _sharedPreferences.get(key);
   }
+
+  static getUserData() {}
 }
