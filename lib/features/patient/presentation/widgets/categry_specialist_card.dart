@@ -19,57 +19,52 @@ class CategrySpecialistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      height: 180,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.color1,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                width: 166,
-                height: 125,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    imageUrl,
-                    width: 166,
-                    height: 111,
-                    fit: BoxFit.cover,
+    return InkWell(
+      onTap: () {
+        pushReplacement(context, DoctorsCategoryView(categoryId: categoryId));
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        width: 180,
+        height: 180,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.color1,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 166,
+                  height: 125,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          Center(
-            child: Text(" $titleCat",
-                style: getTitleStyle(color: AppColors.white)),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    pushReplacement(context, DoctorsCategoryView(categoryId: categoryId,));
-                  },
-                  icon: Icon(Icons.arrow_forward_ios,
-                      color: Colors.white, size: 30)),
-            ],
-          ),
-        ],
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      imageUrl,
+                      width: 166,
+                      height: 111,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Center(
+              child: Text(" $titleCat",
+                  style: getTitleStyle(color: AppColors.white)),
+            ),
+          ],
+        ),
       ),
     );
   }

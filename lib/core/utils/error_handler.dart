@@ -18,4 +18,7 @@ class ErrorHandler {
       ),
     );
   }
+  static void logError(String message) {
+    debugPrint('ERROR: $message');
+  }
 }

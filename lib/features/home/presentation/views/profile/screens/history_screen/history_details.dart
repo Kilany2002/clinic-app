@@ -1,4 +1,5 @@
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
+import 'package:clinicc/features/patient/data/model/history_service.dart';
 import 'package:flutter/material.dart';
 import 'widgets/history_card.dart';
 
@@ -10,25 +11,32 @@ class HistoryDetailsScreen extends StatefulWidget {
 }
 
 class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
-  List<Map<String, String>> appointments = [
-    {
-      "doctorName": "Dr: Osama Ali",
-      "date": "9 MAR",
-      "time": "11:00 AM",
-      "imageUrl": "assets/images/sara 1.png"
-    },
-    {
-      "doctorName": "Dr: Ahmed Mohamed",
-      "date": "10 MAR",
-      "time": "1:00 PM",
-      "imageUrl": "assets/images/sara 1.png"
-    }
-  ];
+  List<Map<String, dynamic>> historyList = [];
+  bool isLoading = true;
 
-  void deleteAppointment(int index) {
+  @override
+  void initState() {
+    super.initState();
+    fetchHistory();
+  }
+
+  Future<void> fetchHistory() async {
+    final data = await HistoryService.getBookingHistory();
     setState(() {
-      appointments.removeAt(index);
+      historyList = data;
+      isLoading = false;
     });
+  }
+
+  void deleteAppointment(int index) async {
+    final historyId = historyList[index]['id'];
+    final success =
+        await HistoryService.deleteHistoryRecord(historyId, context);
+    if (success) {
+      setState(() {
+        historyList.removeAt(index);
+      });
+    }
   }
 
   @override
@@ -43,19 +51,55 @@ class _HistoryDetailsScreenState extends State<HistoryDetailsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: ListView.builder(
-        itemCount: appointments.length,
-        itemBuilder: (context, index) {
-          final item = appointments[index];
-          return HistoryCard(
-            doctorName: item["doctorName"]!,
-            date: item["date"]!,
-            time: item["time"]!,
-            imageUrl: item["imageUrl"]!,
-            onDelete: () => deleteAppointment(index),
-          );
-        },
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : historyList.isEmpty
+              ? const Center(child: Text("No history available."))
+              : ListView.builder(
+                  itemCount: historyList.length,
+                  itemBuilder: (context, index) {
+                    final item = historyList[index];
+                    final doctorName = item['doctor_name'] ?? '';
+                    final dateTime = DateTime.parse(item['date']);
+                    final date =
+                        "${dateTime.day} ${_monthAbbreviation(dateTime.month)}";
+                    final time = "${_formatTime(dateTime)}";
+                    final imageUrl = item['doctor_image_url'] ?? '';
+
+                    return HistoryCard(
+                      doctorName: "Dr: $doctorName",
+                      date: date,
+                      time: time,
+                      imageUrl: imageUrl,
+                      onDelete: () => deleteAppointment(index),
+                    );
+                  },
+                ),
     );
+  }
+
+  String _monthAbbreviation(int month) {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ];
+    return months[month - 1];
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final period = dateTime.hour >= 12 ? "PM" : "AM";
+    return "$hour:$minute $period";
   }
 }

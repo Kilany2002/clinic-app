@@ -33,12 +33,6 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
     popularDoctorsFuture = doctorService.fetchPopularDoctors(widget.categoryId);
   }
 
-  void toggleView() {
-    setState(() {
-      isGridView = !isGridView;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -93,17 +87,6 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
                       Text("Book a Doctor",
                           style: getTitleStyle(
                               fontSize: 24, fontWeight: FontWeight.bold)),
-                      Spacer(),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: Icon(
-                              isGridView ? Icons.filter_list : Icons.grid_view,
-                              color: AppColors.color1,
-                              size: 30),
-                          onPressed: toggleView,
-                        ),
-                      ),
                     ],
                   ),
                 ],

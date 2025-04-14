@@ -13,7 +13,6 @@ class CategoryView extends StatelessWidget {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Category',
-          showBackArrow: true,
           actions: [
             IconButton(
                 onPressed: () {},

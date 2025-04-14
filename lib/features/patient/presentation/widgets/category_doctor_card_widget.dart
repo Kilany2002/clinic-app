@@ -34,7 +34,7 @@ class CategoryDoctorCardWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(doctor.name,
+                Text("Dr. ${doctor.name}",
                     style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -44,13 +44,15 @@ class CategoryDoctorCardWidget extends StatelessWidget {
                         fontSize: 18,
                         color: Colors.white,
                         fontWeight: FontWeight.bold)),
-                Text(doctor.specialty,
-                    style: TextStyle(fontSize: 14, color: Colors.white70)),
+                SizedBox(height: 5),
                 Row(
                   children: [
                     Icon(Icons.star, color: Colors.yellow, size: 25),
                     Text(" ${doctor.rating}",
-                        style: TextStyle(fontSize: 25, color: Colors.white)),
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
+                    SizedBox(width: 35),
+                    Text('${doctor.price} EGP',
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
                   ],
                 ),
               ],

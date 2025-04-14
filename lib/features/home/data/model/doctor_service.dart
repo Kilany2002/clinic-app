@@ -41,7 +41,8 @@ class DoctorService {
           .from('doctors')
           .select()
           .eq('is_popular', true)
-          .eq('is_available', true).eq('category_id', categoryId);
+          .eq('is_available', true)
+          .eq('category_id', categoryId);
 
       return (response as List)
           .map((doctor) => Doctor.fromJson(doctor))

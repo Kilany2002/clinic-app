@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: S.delegate.supportedLocales, // تحديد اللغات المدعومة
+      supportedLocales: S.delegate.supportedLocales, 
       routes: {
         '/': (context) => SplashScreen(),
         LoginScreen.id: (context) => LoginScreen(),

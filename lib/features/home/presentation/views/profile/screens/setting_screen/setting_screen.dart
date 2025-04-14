@@ -4,6 +4,7 @@ import 'package:clinicc/features/home/presentation/views/profile/screens/setting
 import 'package:clinicc/features/home/presentation/views/profile/screens/setting_screen/widgets/rating.dart';
 import 'package:clinicc/features/home/presentation/views/profile/screens/setting_screen/widgets/setting_item.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -31,12 +32,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void deleteAccount() {
-    print("Account deleted");
+  Future<void> deleteAccount() async {
+    try {
+      final supabase = Supabase.instance.client;
+      await supabase
+          .from('users')
+          .delete()
+          .eq('id', supabase.auth.currentUser!.id);
+      await supabase.auth.signOut();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Account deleted successfully')),
-    );
+      if (!mounted) return;
+
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/RoleSelectionScreen', (route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account deleted successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting account: $e')),
+      );
+    }
   }
 
   void togglePasswordCard() {
@@ -65,12 +81,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () => Navigator.pop(context),
             ),
             title: "Settings",
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                onPressed: () {},
-              )
-            ],
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -92,7 +102,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: "Change Language",
                   subtitle: "Arabic, English",
                   onTap: () {
-                    // TODO: Navigate to change language
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            ListTile(title: Text("English")),
+                            ListTile(title: Text("Arabic")),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
                 SettingItem(

@@ -68,6 +68,7 @@ class MessagingConfig {
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+
       log("message received");
       try {
         RemoteNotification? notification = event.notification;
@@ -109,28 +110,35 @@ class MessagingConfig {
       }
     });
 
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+
       handleNotification(navigatorKey.currentContext!, message.data);
     });
   }
 
-  static void handleNotification(BuildContext context, Map<String, dynamic> data) {
-    log('Handling notification with data: $data');
+static void handleNotification(BuildContext context, Map<String, dynamic> data) {
+  log('Handling notification with data: $data');
 
-    if (data.containsKey('screen')) {
-      String screen = data['screen'];
-
-      if (screen == 'chat') {
-        Navigator.of(context).pushNamed('/chat'); // Replace with real route
-      } else if (screen == 'home') {
-        Navigator.of(context).pushNamed('/'); // Replace with your home screen
-      } else {
-        log('No route found for screen: $screen');
-      }
+  if (data.containsKey('type')) {
+    if (data['type'] == 'new_booking') {
+      // Show doctor-specific notification UI
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("New booking from ${data['patient_name']}"),
+        ),
+      );
+      Navigator.of(context).pushNamed('/doctor-appointments');
+    } else if (data['type'] == 'booking_confirmation') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Confirmed with Dr. ${data['doctor_name']}"),
+        ),
+      );
+      Navigator.of(context).pushNamed('/my-appointments');
     }
   }
-
-  @pragma('vm:entry-point')
+}  @pragma('vm:entry-point')
   static Future<void> messageHandler(RemoteMessage message) async {
     log('background message ${message.notification!.body}');
   }

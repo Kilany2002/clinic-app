@@ -57,11 +57,6 @@ class DoctorCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
-                right: 5,
-                child: Icon(Icons.favorite_border,
-                    color: AppColors.color1, size: 30),
-              ),
             ],
           ),
           const SizedBox(height: 10),

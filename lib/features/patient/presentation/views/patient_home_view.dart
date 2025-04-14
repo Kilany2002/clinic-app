@@ -25,11 +25,9 @@ class _PatientHomeViewState extends State<PatientHomeView> {
   Future<List<Doctor>>? doctorsFuture;
 
   @override
-
   void initState() {
     super.initState();
-    userDataFuture =
-        patientService.fetchUserName(); 
+    userDataFuture = patientService.fetchUserName();
     doctorsFuture = doctorService.fetchAllDoctors();
   }
 
@@ -48,18 +46,14 @@ class _PatientHomeViewState extends State<PatientHomeView> {
               FutureBuilder<String?>(
                 future: userDataFuture,
                 builder: (context, snapshot) {
-                  print("📢 FutureBuilder State: ${snapshot.connectionState}");
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    print("❌ Error: ${snapshot.error}");
                     return Text('Error fetching name', style: getbodyStyle());
                   } else if (!snapshot.hasData || snapshot.data == null) {
-                    print("❌ No data, showing default");
                     return const Text('Hello, Patient');
                   }
 
-                  print("✅ Displaying name: ${snapshot.data}");
                   return Row(
                     children: [
                       Text(
@@ -107,38 +101,37 @@ class _PatientHomeViewState extends State<PatientHomeView> {
               const Gap(10),
               SizedBox(
                 height: 270,
-                child:FutureBuilder<List<Doctor>>(
-  future: doctorsFuture,
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      return const Text('No doctors available');
-    }
+                child: FutureBuilder<List<Doctor>>(
+                  future: doctorsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text('No doctors available');
+                    }
 
-    final doctors = snapshot.data!;
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: doctors.length,
-      itemBuilder: (context, index) {
-        final doctor = doctors[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: DoctorCard(
-            imageUrl: doctor.imageUrl,
-            name: doctor.name,
-            rating: doctor.rating,
-            experience: int.parse(doctor.experience),
-            price: double.parse(doctor.price),
-          ),
-        );
-      },
-    );
-  },
-),
-
+                    final doctors = snapshot.data!;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: doctors.length,
+                      itemBuilder: (context, index) {
+                        final doctor = doctors[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: DoctorCard(
+                            imageUrl: doctor.imageUrl,
+                            name: doctor.name,
+                            rating: doctor.rating,
+                            experience: int.parse(doctor.experience),
+                            price: double.parse(doctor.price),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),

@@ -10,7 +10,7 @@ class WorkDateTimeline extends StatelessWidget {
   const WorkDateTimeline({
     Key? key,
     required this.workDays,
-    required this.onDateChange,
+    required this.onDateChange, DateTime? initialSelectedDate,
   }) : super(key: key);
 
   List<DateTime> _generateWorkDates() {

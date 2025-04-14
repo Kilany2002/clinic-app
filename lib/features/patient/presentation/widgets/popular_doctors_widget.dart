@@ -31,7 +31,7 @@ class PopularDoctorCard extends StatelessWidget {
                   height: 113,
                   fit: BoxFit.cover)),
           SizedBox(height: 5),
-          Text(doctor.name,
+          Text("Dr. ${doctor.name}",
               style: getbodyStyle(
                 fontSize: 12,
                 color: AppColors.white,
