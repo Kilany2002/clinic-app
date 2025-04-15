@@ -17,6 +17,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   String? email;
   String? password;
+  String? confirmPassword;
   String? name;
   String? phoneNumber;
   String? role;
@@ -37,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       child: Scaffold(
-        backgroundColor: AppColors.color1, 
+        backgroundColor: AppColors.color1,
         body: SafeArea(
           child: Column(
             children: [
@@ -61,7 +62,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(50)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(50)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -71,7 +73,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/sgin_up.jpg', width: 100), 
+                            Image.asset('assets/images/sgin_up.jpg',
+                                width: 100),
                             SizedBox(height: 20),
                             TextFormField(
                               onChanged: (data) => name = data,
@@ -82,7 +85,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return null;
                               },
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.person, color: AppColors.color1),
+                                prefixIcon:
+                                    Icon(Icons.person, color: AppColors.color1),
                                 hintText: "Name",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -100,7 +104,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.phone, color: AppColors.color1),
+                                prefixIcon:
+                                    Icon(Icons.phone, color: AppColors.color1),
                                 hintText: "Phone Number",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -114,11 +119,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your email';
                                 }
+                                if (!value.contains('@')) {
+                                  return 'Please enter a valid email';
+                                }
                                 return null;
                               },
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.email, color: AppColors.color1),
+                                prefixIcon:
+                                    Icon(Icons.email, color: AppColors.color1),
                                 hintText: "Email",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -133,11 +142,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your password';
                                 }
+                                if (value.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
                                 return null;
                               },
                               decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock, color: AppColors.color1),
+                                prefixIcon:
+                                    Icon(Icons.lock, color: AppColors.color1),
                                 hintText: "Password",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            TextFormField(
+                              obscureText: true,
+                              onChanged: (data) => confirmPassword = data,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                if (value != password) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.lock_outline,
+                                    color: AppColors.color1),
+                                hintText: "Confirm Password",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -155,9 +190,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                                     try {
                                       await registerUser(role!);
-                                      Navigator.pushNamed(context, LoginScreen.id, arguments: role);
+                                      Navigator.pushNamed(
+                                          context, LoginScreen.id,
+                                          arguments: role);
                                     } on Exception catch (e) {
-                                      showSnackBar(context, 'Registration failed: $e');
+                                      showSnackBar(
+                                          context, 'Registration failed: $e');
                                     }
 
                                     isLoading = false;
@@ -171,7 +209,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
                                 child: Text("Sign Up",
-                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
                               ),
                             ),
                             SizedBox(height: 10),
@@ -214,42 +253,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
   Future<void> registerUser(String role) async {
-  try {
-    print('Attempting to register user with email: $email and role: $role');
-    final response = await Supabase.instance.client.auth.signUp(
-      email: email!,
-      password: password!,
-    );
+    try {
+      print('Attempting to register user with email: $email and role: $role');
+      final response = await Supabase.instance.client.auth.signUp(
+        email: email!,
+        password: password!,
+      );
 
-    if (response.user == null) {
-      print('Registration failed: User is null');
-      showSnackBar(context, "User registration failed.");
-      return;
+      if (response.user == null) {
+        print('Registration failed: User is null');
+        showSnackBar(context, "User registration failed.");
+        return;
+      }
+
+      print('User registered successfully: ${response.user!.id}');
+
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      print('FCM Token: $fcmToken');
+
+      await Supabase.instance.client.from('users').insert({
+        'id': response.user!.id,
+        'email': email,
+        'role': role,
+        'name': name,
+        'fcm_token': fcmToken,
+        'phone_number': phoneNumber,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      print('User data saved to Supabase');
+      showSnackBar(context, "User registered successfully!");
+    } on Exception catch (e) {
+      print('Error during registration: $e');
+      showSnackBar(context, 'Registration failed: $e');
     }
-
-    print('User registered successfully: ${response.user!.id}');
-
-    // 🔔 Get the FCM token
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    print('FCM Token: $fcmToken');
-
-    // Save user info including FCM token in Supabase table
-    await Supabase.instance.client.from('users').insert({
-      'id': response.user!.id,
-      'email': email,
-      'role': role,
-      'name': name,
-      'fcm_token': fcmToken,
-      'phone_number': phoneNumber,
-      'created_at': DateTime.now().toIso8601String(),
-    });
-
-    print('User data saved to Supabase');
-    showSnackBar(context, "User registered successfully!");
-  } on Exception catch (e) {
-    print('Error during registration: $e');
-    showSnackBar(context, 'Registration failed: $e');
   }
-}
 }

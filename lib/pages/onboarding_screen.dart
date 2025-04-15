@@ -1,6 +1,6 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/generated/l10n.dart';
-import 'package:clinicc/pages/language.dart';
+import 'package:clinicc/pages/custom_lang_dropdown.dart';
 import 'package:clinicc/pages/role_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -17,17 +17,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   List<Map<String, String>> pages = [
     {
-      'image': 'assets/images/doctor.jpg',
-      'title': 'chooseDoctor',
-      'description': 'doctorDescription',
-    },
-    {
-      'image': 'assets/images/calendar.jpg',
+      'image': 'assets/images/1.png',
       'title': 'chooseDateTime',
       'description': 'dateTimeDescription',
     },
     {
-      'image': 'assets/images/chat.jpg',
+      'image': 'assets/images/2.png',
+      'title': 'chooseDoctor',
+      'description': 'doctorDescription',
+    },
+    {
+      'image': 'assets/images/Untitled design.png',
       'title': 'communicateWithDoctor',
       'description': 'chatDescription',
     }
@@ -49,50 +49,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               return OnboardingPage(
                 image: pages[index]['image']!,
                 title: S.of(context).chooseDoctor,
-                description:
-                    S.of(context).doctorDescription,
+                description: S.of(context).doctorDescription,
               );
             },
           ),
-
-          Positioned(
-            top: 50,
-            right: 20,
-            child: _currentPage != pages.length - 1
-                ? Row(
-                    children: [
-                      LanguageDropdown(
-                        onChanged: (lang) {
-                          if (lang == 'English') {
-                            S.load(Locale('en', 'US'));
-                            print("Language set to English");
-                          } else if (lang == 'العربية') {
-                            S.load(Locale('ar', 'AR'));
-                            print("Language set to Arabic");
-                          }
-                          setState(() {});
-                        },
-                      ),
-                      SizedBox(width: 20),
-                      // زر السكيب
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RoleSelectionScreen()),
-                          );
-                        },
-                        child: Text(S.of(context).skip, // ترجم السكيب هنا
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16)),
-                      ),
-                    ],
-                  )
-                : SizedBox(),
-          ),
-
-          // جزء المعلومات والتفاعلات
+          if (_currentPage != pages.length - 1) ...[
+            Positioned(
+              top: 50,
+              left: 20,
+              child: LanguageDropdown(
+                onChanged: (lang) {
+                  if (lang == 'English') {
+                    S.load(Locale('en', 'US'));
+                    print("Language set to English");
+                  } else if (lang == 'العربية') {
+                    S.load(Locale('ar', 'AR'));
+                    print("Language set to Arabic");
+                  }
+                  setState(() {}); // Rebuild the UI to reflect language change
+                },
+              ),
+            ),
+            Positioned(
+              top: 50,
+              right: 20,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RoleSelectionScreen()),
+                  );
+                },
+                child: Text(
+                  S.of(context).skip,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ],
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -107,12 +102,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    S.of(context).chooseDoctor, // ترجم العنوان هنا
+                    S.of(context).chooseDoctor, // Translated title
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    S.of(context).doctorDescription, // ترجم الوصف هنا
+                    S.of(context).doctorDescription, // Translated description
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   Spacer(),
@@ -148,8 +143,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Row(
                           children: [
                             Text(_currentPage == pages.length - 1
-                                ? S.of(context).start // ترجم هنا
-                                : S.of(context).next), // ترجم هنا
+                                ? S
+                                    .of(context)
+                                    .start // Translated start button text
+                                : S
+                                    .of(context)
+                                    .next), // Translated next button text
                             SizedBox(width: 5),
                             Icon(Icons.arrow_forward),
                           ],

@@ -30,12 +30,12 @@ class _SplashScreenState extends State<SplashScreen> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Container(
-                width: 200,
-                height: 200,
+                width: 600,
+                height: 600,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage('assets/images/logo.jpg'),
+                    image: AssetImage('assets/images/Health_Hub.png'),
                     fit: BoxFit.cover,
                   ),
                 ),

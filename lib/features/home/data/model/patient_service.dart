@@ -14,7 +14,7 @@ class PatientService {
     try {
       final response = await supabase
           .from('users')
-          .select('name, phone_number, email') 
+          .select('name, phone_number, email')
           .eq('id', user.id)
           .maybeSingle();
 
@@ -26,7 +26,8 @@ class PatientService {
       debugPrint("✅ User details fetched: $response");
       return {
         'name': response['name'] as String?,
-        'phoneNumber': response['phone_number'] as String?,
+        'phoneNumber':
+            response['phone_number']?.toString(), // Convert to string
         'email': response['email'] as String?,
       };
     } catch (e) {

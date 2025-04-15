@@ -3,6 +3,7 @@ import 'package:clinicc/features/doctor/logic/doctor_profile_controller.dart';
 import 'package:clinicc/features/doctor/screens/doctor_edit_profile_view.dart';
 import 'package:flutter/material.dart';
 import '../../../pages/role_screen.dart';
+import '../../home/presentation/views/profile/screens/setting_screen/setting_screen.dart';
 import '../widgets/form/menu_item.dart';
 
 class DoctorProfileView extends StatefulWidget {
@@ -90,10 +91,13 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
               children: [
                 CircleAvatar(
                   radius: 50,
+                  backgroundColor: const Color(0xFF3A72B9),
                   backgroundImage: _controller.imageUrl != null
                       ? NetworkImage(_controller.imageUrl!)
-                      : const AssetImage('assets/images/sara 1.png')
-                          as ImageProvider,
+                      : null,
+                  child: _controller.imageUrl == null
+                      ? const Icon(Icons.person, size: 80, color: Colors.white)
+                      : null,
                 ),
                 Positioned(
                   bottom: 0,
@@ -156,7 +160,14 @@ class _DoctorProfileViewState extends State<DoctorProfileView> {
                       }
                     },
                   ),
-                  buildMenuItem(Icons.settings, 'Settings'),
+                  buildMenuItem(Icons.settings, 'Settings', onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
+                  }),
                   GestureDetector(
                     child: buildMenuItem(Icons.logout, 'Logout'),
                     onTap: _handleLogout,

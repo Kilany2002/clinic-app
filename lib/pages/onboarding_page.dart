@@ -5,7 +5,8 @@ class OnboardingPage extends StatelessWidget {
   final String title;
   final String description;
 
-  OnboardingPage({required this.image, required this.title, required this.description});
+  OnboardingPage(
+      {required this.image, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +15,10 @@ class OnboardingPage extends StatelessWidget {
         Expanded(
           child: Center(
             child: Container(
-              width: 200, 
-              height: 200,
+              width: 500,
+              height: 500,
               decoration: BoxDecoration(
-                shape: BoxShape.circle, 
+                shape: BoxShape.circle,
                 image: DecorationImage(
                   image: AssetImage(image),
                   fit: BoxFit.cover,

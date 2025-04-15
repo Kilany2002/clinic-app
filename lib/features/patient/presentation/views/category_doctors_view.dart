@@ -1,14 +1,12 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
-import 'package:clinicc/core/widgets/custom_app_bar.dart';
-
 import 'package:clinicc/features/home/data/model/doctor_service.dart';
 import 'package:clinicc/features/patient/data/model/doctor_category_list.dart';
+import 'package:clinicc/features/patient/presentation/views/bottom_nav_bar.dart';
 import 'package:clinicc/features/patient/presentation/widgets/category_doctor_card_widget.dart';
 import 'package:clinicc/features/patient/presentation/widgets/doctor_profile_cat.dart';
 import 'package:clinicc/features/patient/presentation/widgets/popular_doctors_widget.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../core/functions/routing.dart';
 
 class DoctorsCategoryView extends StatefulWidget {
@@ -37,9 +35,22 @@ class _DoctorsCategoryViewState extends State<DoctorsCategoryView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Doctors',
-          showBackArrow: true,
+        appBar: AppBar(
+          title: Text('Doctors',
+              style: getTitleStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.white)),
+          backgroundColor: AppColors.color1,
+          centerTitle: true,
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => BottomNavBar()),
+                );
+              }),
         ),
         body: Column(
           children: [

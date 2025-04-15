@@ -1,6 +1,6 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
-import 'package:clinicc/features/patient/presentation/widgets/category_doctors_view.dart';
+import 'package:clinicc/features/patient/presentation/views/category_doctors_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/functions/routing.dart';

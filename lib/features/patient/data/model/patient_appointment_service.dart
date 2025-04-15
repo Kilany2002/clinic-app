@@ -52,115 +52,114 @@ class PatientAppointmentService {
     }
   }
 
- static Future<bool> bookAppointment({
-  required String name,
-  required int age,
-  required String visitType,
-  required DateTime date,
-  required String doctorId,
-  required bool isPaid,
-  required BuildContext context,
-  required Doctor doctor,
-  required String? patientFCMToken, // Make nullable
-  required String? doctorFCMToken,  // Make nullable
-}) async {
-  final user = _supabase.auth.currentUser;
-  if (user == null) {
-    ErrorHandler.showError(context, "Please login to book appointments");
-    return false;
-  }
+  static Future<bool> bookAppointment({
+    required String name,
+    required int age,
+    required String visitType,
+    required DateTime date,
+    required String doctorId,
+    required bool isPaid,
+    required BuildContext context,
+    required Doctor doctor,
+    required String? patientFCMToken, // Make nullable
 
-  try {
-    // Book appointment (existing code)
-    final lastOrderNumber = await getLastOrderNumberForDate(date, doctorId);
-    final orderNumber = lastOrderNumber + 1;
+    required String? doctorFCMToken,
+  }) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) {
+      ErrorHandler.showError(context, "Please login to book appointments");
+      return false;
+    }
 
-    await _supabase.from('patients').insert({
-      'name': name,
-      'age': age,
-      'order_number': orderNumber,
-      'visit_type': visitType,
-      'doctor_id': doctorId,
-      'date': date.toIso8601String(),
-      'isPaid': isPaid,
-      'patient_user_id': user.id,
-    });
+    try {
+      // Book appointment (existing code)
+      final lastOrderNumber = await getLastOrderNumberForDate(date, doctorId);
+      final orderNumber = lastOrderNumber + 1;
 
-    // Add to history
-    await HistoryService.addHistoryRecord(
-      doctorId: doctor.id,
-      doctorName: doctor.name,
-      doctorImageUrl: doctor.imageUrl,
-      date: date,
-      context: context,
-    );
+      await _supabase.from('patients').insert({
+        'name': name,
+        'age': age,
+        'order_number': orderNumber,
+        'visit_type': visitType,
+        'doctor_id': doctorId,
+        'date': date.toIso8601String(),
+        'isPaid': isPaid,
+        'patient_user_id': user.id,
+      });
 
-    // Send notifications only if tokens exist
-    if (patientFCMToken != null || doctorFCMToken != null) {
-      await _sendBookingNotifications(
-        patientName: name,
-        doctor: doctor,
+      await HistoryService.addHistoryRecord(
+        doctorId: doctor.id,
+        doctorName: doctor.name,
+        doctorImageUrl: doctor.imageUrl,
         date: date,
-        patientFCMToken: patientFCMToken,
-        doctorFCMToken: doctorFCMToken,
+        context: context,
       );
-    }
+      // Send notifications only if tokens exist
+      if (patientFCMToken != null || doctorFCMToken != null) {
+        await _sendBookingNotifications(
+          patientName: name,
+          doctor: doctor,
+          date: date,
+          patientFCMToken: patientFCMToken,
+          doctorFCMToken: doctorFCMToken,
+        );
+      }
 
-    ErrorHandler.showSuccess(context, "Appointment booked successfully!");
-    return true;
-  } catch (e) {
-    ErrorHandler.showError(context, "Failed to book appointment: $e");
-    return false;
-  }
-}
-
-static Future<void> _sendBookingNotifications({
-  required String patientName,
-  required Doctor doctor,
-  required DateTime date,
-  required String? patientFCMToken,
-  required String? doctorFCMToken,
-}) async {
-  final formattedDate = "${date.day}/${date.month}/${date.year}";
-
-  // Notification for doctor if token exists
-  if (doctorFCMToken != null) {
-    try {
-      await sendNotification(
-        token: doctorFCMToken,
-        title: "New Appointment Booking",
-        body: "$patientName booked an appointment on $formattedDate",
-        data: {
-          'screen': 'appointments',
-          'type': 'new_booking',
-          'patient_name': patientName,
-          'date': formattedDate,
-        },
-      );
+      ErrorHandler.showSuccess(context, "Appointment booked successfully!");
+      return true;
     } catch (e) {
-      debugPrint("Failed to send doctor notification: $e");
+      ErrorHandler.showError(context, "Failed to book appointment: $e");
+      return false;
     }
   }
 
-  // Notification for patient if token exists
-  if (patientFCMToken != null) {
-    try {
-      await sendNotification(
-        token: patientFCMToken,
-        title: "Appointment Confirmed",
-        body: "Your appointment with Dr. ${doctor.name} is confirmed for $formattedDate",
-        data: {
-          'screen': 'appointments',
-          'type': 'booking_confirmation',
-          'doctor_name': doctor.name,
-          'date': formattedDate,
-        },
-      );
-    } catch (e) {
-      debugPrint("Failed to send patient notification: $e");
+  static Future<void> _sendBookingNotifications({
+    required String patientName,
+    required Doctor doctor,
+    required DateTime date,
+    required String? patientFCMToken,
+    required String? doctorFCMToken,
+  }) async {
+    final formattedDate = "${date.day}/${date.month}/${date.year}";
+
+    // Notification for doctor if token exists
+    if (doctorFCMToken != null) {
+      try {
+        await sendNotification(
+          token: doctorFCMToken,
+          title: "New Appointment Booking",
+          body: "$patientName booked an appointment on $formattedDate",
+          data: {
+            'screen': 'appointments',
+            'type': 'new_booking',
+            'patient_name': patientName,
+            'date': formattedDate,
+          },
+        );
+      } catch (e) {
+        debugPrint("Failed to send doctor notification: $e");
+      }
+    }
+
+    // Notification for patient if token exists
+    if (patientFCMToken != null) {
+      try {
+        await sendNotification(
+          token: patientFCMToken,
+          title: "New Appointment Booking",
+          body: "$patientName booked an appointment on $formattedDate",
+          data: {
+            'screen': 'appointments',
+            'type': 'new_booking',
+            'patient_name': patientName,
+            'date': formattedDate,
+          },
+        );
+      } catch (e) {
+        debugPrint("Failed to send patient notification: $e");
+      }
     }
   }
-}
 
   static Future<List<Map<String, dynamic>>> getBookingHistory() async {
     final user = _supabase.auth.currentUser;

@@ -12,7 +12,8 @@ class PatientBookingButton extends StatelessWidget {
     required this.patientAge,
     required this.visitType,
     required this.selectedDate,
-    required this.patientFCMToken,
+    required this.patientFCMToken, // Keep required but can be null
+
     required this.doctorFCMToken,
     this.onBookingSuccess,
   });
@@ -22,8 +23,9 @@ class PatientBookingButton extends StatelessWidget {
   final int patientAge;
   final String visitType;
   final DateTime selectedDate;
-  final String? patientFCMToken;
   final String? doctorFCMToken;
+  final String? patientFCMToken; // Now nullable
+
   final VoidCallback? onBookingSuccess;
 
   @override

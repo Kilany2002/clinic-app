@@ -1,12 +1,12 @@
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:flutter/material.dart';
-
 class DoctorCard extends StatelessWidget {
   final String? imageUrl;
   final String name;
   final double rating;
   final int experience;
   final double price;
+  final VoidCallback? onTap;
 
   const DoctorCard({
     super.key,
@@ -15,18 +15,21 @@ class DoctorCard extends StatelessWidget {
     required this.rating,
     required this.experience,
     required this.price,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 318,
-      height: 270,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.color1,
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 318,
+        height: 270,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.color1,
+          borderRadius: BorderRadius.circular(20),
+        ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -101,6 +104,6 @@ class DoctorCard extends StatelessWidget {
           const Spacer(),
         ],
       ),
-    );
+     ), );
   }
 }

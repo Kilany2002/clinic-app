@@ -117,8 +117,9 @@ class _PatientDialogState extends State<PatientDialog> {
             selectedDate: widget.selectedDate,
             onBookingSuccess: widget.onSuccess,
             patientFCMToken:
-                "d0zf1hPFS7m3JqCuUF76nj:APA91bFimUBF9HHGDVJdTFiYIo0kDqkfmnJkkgQtUWU7_xrOLHxifmaQE_BIN0VN8KWdYbf-IQpAsylmfwiBfeEu0ylTYFMyePJDbM_G4F6_HhQOcNJrvTo",
-            doctorFCMToken: widget.doctor.fcmToken,
+                'd0zf1hPFS7m3JqCuUF76nj:APA91bFimUBF9HHGDVJdTFiYIo0kDqkfmnJkkgQtUWU7_xrOLHxifmaQE_BIN0VN8KWdYbf-IQpAsylmfwiBfeEu0ylTYFMyePJDbM_G4F6_HhQOcNJrvTo',
+            doctorFCMToken:
+                'd0zf1hPFS7m3JqCuUF76nj:APA91bFimUBF9HHGDVJdTFiYIo0kDqkfmnJkkgQtUWU7_xrOLHxifmaQE_BIN0VN8KWdYbf-IQpAsylmfwiBfeEu0ylTYFMyePJDbM_G4F6_HhQOcNJrvTo',
           ),
         ),
       ),

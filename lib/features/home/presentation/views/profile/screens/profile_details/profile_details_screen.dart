@@ -24,14 +24,15 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Future<void> _fetchUserData() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
     try {
       final currentUser = Supabase.instance.client.auth.currentUser;
       if (currentUser == null) {
-        setState(() {
-          errorMessage = "No user logged in";
-          isLoading = false;
-        });
-        return;
+        throw Exception("No user logged in");
       }
 
       final response = await Supabase.instance.client
@@ -41,27 +42,27 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           .maybeSingle();
 
       if (response == null) {
-        setState(() {
-          errorMessage = "User data not found";
-          isLoading = false;
-        });
-        return;
+        throw Exception("User data not found");
       }
 
       setState(() {
         user = UserProfile(
-          name: response['name'] ?? "Not provided",
-          phone: response['phone_number'] ?? "Not provided",
-          email: response['email'] ?? "Not provided",
+          name: response['name']?.toString() ?? "Not provided",
+          phone: response['phone_number']?.toString() ?? "Not provided",
+          email: response['email']?.toString() ?? "Not provided",
         );
         isLoading = false;
       });
     } catch (e) {
       setState(() {
-        errorMessage = "Failed to load user data";
+        errorMessage = e.toString().replaceAll('Exception: ', '');
         isLoading = false;
       });
     }
+  }
+
+  Future<void> _refreshData() async {
+    await _fetchUserData();
   }
 
   @override
@@ -76,7 +77,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         title: 'Profile Details',
         actions: [
           if (user != null)
-            TextButton(
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
               onPressed: () async {
                 final updatedUser = await Navigator.push<UserProfile>(
                   context,
@@ -85,42 +87,64 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                 );
                 if (updatedUser != null) {
-                  setState(() {
-                    user = updatedUser;
-                  });
+                  setState(() => user = updatedUser);
                 }
               },
-              child: const Text(
-                'Edit',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
             ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-              ? Center(child: Text(errorMessage!))
-              : Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          setValue('Full Name', user?.name ?? "Not available"),
-                          setValue(
-                              'Phone number', user?.phone ?? "Not available"),
-                          setValue('Email', user?.email ?? "Not available"),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: _buildBodyContent(),
+      ),
+    );
+  }
+
+  Widget _buildBodyContent() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              errorMessage!,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchUserData,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                setValue('Full Name', user?.name ?? "Not available"),
+                const Divider(height: 24),
+                setValue('Phone number', user?.phone ?? "Not available"),
+                const Divider(height: 24),
+                setValue('Email', user?.email ?? "Not available"),
+                const Divider(height: 24),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

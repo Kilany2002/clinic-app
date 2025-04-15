@@ -23,7 +23,7 @@ class Doctor {
     required this.description,
     required this.price,
     required this.isPaid,
-    this.fcmToken, // Now nullable
+    this.fcmToken, 
     required this.destinations,
   });
 

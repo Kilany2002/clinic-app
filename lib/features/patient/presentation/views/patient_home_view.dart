@@ -1,5 +1,6 @@
 import 'package:clinicc/features/home/data/model/doctor_service.dart';
 import 'package:clinicc/features/patient/data/model/doctor_category_list.dart';
+import 'package:clinicc/features/patient/presentation/widgets/doctor_profile_cat.dart';
 import 'package:flutter/material.dart';
 import 'package:clinicc/core/utils/colors.dart';
 import 'package:clinicc/core/utils/text_style.dart';
@@ -36,7 +37,9 @@ class _PatientHomeViewState extends State<PatientHomeView> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(60), child: AppBarr()),
+        preferredSize: Size.fromHeight(60),
+        child: AppBarr(),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: SingleChildScrollView(
@@ -47,7 +50,7 @@ class _PatientHomeViewState extends State<PatientHomeView> {
                 future: userDataFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return skeletonLoader(width: 150, height: 24);
                   } else if (snapshot.hasError) {
                     return Text('Error fetching name', style: getbodyStyle());
                   } else if (!snapshot.hasData || snapshot.data == null) {
@@ -89,15 +92,16 @@ class _PatientHomeViewState extends State<PatientHomeView> {
               ),
               const Gap(10),
               Align(
-                  alignment: Alignment.centerLeft,
-                  child:
-                      Text("Specialties", style: getTitleStyle(fontSize: 20))),
+                alignment: Alignment.centerLeft,
+                child: Text("Specialties", style: getTitleStyle(fontSize: 20)),
+              ),
               const Gap(10),
               const SpecializationCard(),
               const Gap(10),
               Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Doctors", style: getTitleStyle(fontSize: 20))),
+                alignment: Alignment.centerLeft,
+                child: Text("Doctors", style: getTitleStyle(fontSize: 20)),
+              ),
               const Gap(10),
               SizedBox(
                 height: 270,
@@ -105,7 +109,26 @@ class _PatientHomeViewState extends State<PatientHomeView> {
                   future: doctorsFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                skeletonLoader(width: 150, height: 180),
+                                const SizedBox(height: 8),
+                                skeletonLoader(width: 120, height: 20),
+                                const SizedBox(height: 4),
+                                skeletonLoader(width: 80, height: 16),
+                              ],
+                            ),
+                          );
+                        },
+                      );
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -126,6 +149,15 @@ class _PatientHomeViewState extends State<PatientHomeView> {
                             rating: doctor.rating,
                             experience: int.parse(doctor.experience),
                             price: double.parse(doctor.price),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DoctorProfileCat(doctor: doctor),
+                                ),
+                              );
+                            },
                           ),
                         );
                       },

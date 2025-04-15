@@ -16,6 +16,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   List<Map<String, dynamic>> conversations = [];
   List<Map<String, dynamic>> filteredConversations = [];
   final TextEditingController _searchController = TextEditingController();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -30,6 +31,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   }
 
   Future<void> _fetchConversations() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final user = _supabase.auth.currentUser;
     if (user == null) return;
 
@@ -56,7 +61,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
 
     setState(() {
       conversations = groupedConversations.values.toList();
-      filteredConversations = conversations; // Initialize filtered list
+      filteredConversations = conversations;
+      isLoading = false;
     });
   }
 
@@ -121,7 +127,6 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       appBar: CustomAppBar(
         title: 'Conversations',
         centerTitle: true,
-        
       ),
       body: Column(
         children: [
@@ -140,72 +145,92 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredConversations.length,
-              itemBuilder: (context, index) {
-                final conversation = filteredConversations[index];
-                final otherUserId =
-                    conversation['sender_id'] == _supabase.auth.currentUser?.id
-                        ? conversation['receiver_id']
-                        : conversation['sender_id'];
-                final otherUserName = conversation['other_user_name'];
-
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  decoration: BoxDecoration(
-                    border: Border.symmetric(
-                      horizontal: BorderSide(
-                        color: AppColors.greyColor,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16.0),
-                    leading: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: AppColors.color1,
-                      foregroundColor: Colors.white,
-                      child: const Icon(Icons.person, size: 30),
-                    ),
-                    title: Text(
-                      otherUserName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        conversation['message_text'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    trailing: Text(
-                      formatMessageTime(conversation['created_at']),
-                      style: const TextStyle(
-                        fontSize: 14, // Increase trailing text size
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                            userId: otherUserId,
-                            userName: otherUserName,
+            child: isLoading
+                ? ListView.builder(
+                    itemCount: 6,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12.0),
+                      child: Row(
+                        children: [
+                          skeletonLoader(width: 60, height: 60),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                skeletonLoader(width: 150, height: 16),
+                                const SizedBox(height: 8),
+                                skeletonLoader(width: 200, height: 14),
+                              ],
+                            ),
                           ),
+                        ],
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: filteredConversations.length,
+                    itemBuilder: (context, index) {
+                      final conversation = filteredConversations[index];
+                      final otherUserId = conversation['sender_id'] ==
+                              _supabase.auth.currentUser?.id
+                          ? conversation['receiver_id']
+                          : conversation['sender_id'];
+                      final otherUserName = conversation['other_user_name'];
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        decoration: BoxDecoration(
+                          border: Border.symmetric(
+                            horizontal: BorderSide(
+                              color: AppColors.greyColor,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16.0),
+                          leading: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: AppColors.color1,
+                            foregroundColor: Colors.white,
+                            child: const Icon(Icons.person, size: 30),
+                          ),
+                          title: Text(
+                            otherUserName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              conversation['message_text'],
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          trailing: Text(
+                            formatMessageTime(conversation['created_at']),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  userId: otherUserId,
+                                  userName: otherUserName,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:clinicc/core/functions/Language_service.dart';
 import 'package:clinicc/core/widgets/custom_app_bar.dart';
 import 'package:clinicc/features/home/presentation/views/profile/screens/setting_screen/widgets/change_password.dart';
 import 'package:clinicc/features/home/presentation/views/profile/screens/setting_screen/widgets/delete_account.dart';
@@ -32,6 +33,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _showLanguagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text("English"),
+            onTap: () async {
+              await LanguageService.setLanguage('en');
+              Navigator.pop(context);
+              _showRestartDialog();
+            },
+          ),
+          ListTile(
+            title: const Text("Arabic"),
+            onTap: () async {
+              await LanguageService.setLanguage('ar');
+              Navigator.pop(context);
+              _showRestartDialog();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRestartDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Restart Required"),
+        content:
+            const Text("Please restart the app to apply the language change."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> deleteAccount() async {
     try {
       final supabase = Supabase.instance.client;
@@ -44,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
 
       Navigator.of(context)
-          .pushNamedAndRemoveUntil('/RoleSelectionScreen', (route) => false);
+          .pushNamedAndRemoveUntil('RoleSelectionScreen', (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Account deleted successfully')),
       );
@@ -101,20 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   iconBgColor: const Color(0xFFB0D3F2),
                   title: "Change Language",
                   subtitle: "Arabic, English",
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            ListTile(title: Text("English")),
-                            ListTile(title: Text("Arabic")),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                  onTap: () => _showLanguagePicker(context),
                 ),
                 SettingItem(
                   icon: Icons.lock,
